@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+	x:Class="Demo.WidowsPresentation.Controls.RoutePanel" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	mc:Ignorable="d"
+	d:DesignHeight="300"
+	d:DesignWidth="300"
+Width="200">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<TextBlock
+			Name="lblRef"
+			Grid.Row="0" />
+		<TextBlock
+			Name="lblName"
+			Grid.Row="1" />
+		<TextBlock
+			Name="lblOperator"
+			Grid.Row="2" />
+		<TextBlock
+			Name="lblNetwork"
+			Grid.Row="3" />
+		<TextBlock
+			Name="lblDescription"
+			Grid.Row="4" />
+		<TextBlock
+			Name="lblForward"
+			Text="Маршрут движения"
+			Grid.Row="5" />
+		<StackPanel
+			Name="stkForward"
+			Grid.Row="6">
+			<StackPanel
+				Name="stkForwardWays" />
+			<TextBox
+				Name="lblForwardStops"
+				Text="Остановки"
+				FontSize="14" />
+			<StackPanel
+				Name="stkForwardStops" />
+		</StackPanel>
+		<TextBox
+			Name="lblBackward"
+			Text="Обратный маршрут"
+			Grid.Row="7" />
+		<StackPanel
+			Name="stkBackward"
+			Grid.Row="8">
+			<StackPanel
+				Name="stkBackwardWays" />
+			<TextBox
+				Name="lblBackwardStops"
+				Text="Остановки" />
+			<StackPanel
+				Name="stkBackwardStops" />
+		</StackPanel>
+	</Grid>
+</UserControl>

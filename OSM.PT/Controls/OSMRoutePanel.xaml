@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+	x:Class="Demo.WindowsPresentation.Controls.OSMRoutePanel" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Width="180"
+	Padding="5"
+	>
+	<Grid
+		Background="AliceBlue"
+		HorizontalAlignment="Stretch"
+		VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition MaxHeight="100" Height="Auto" />
+			<RowDefinition MaxHeight="20"/>
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<StackPanel Grid.Row="0">
+		<TextBlock
+			Name="lblRef"
+			Grid.Row="0"
+			FontSize="16"
+			FontWeight="Bold"
+			Foreground="Red"
+			TextWrapping="Wrap"
+			/>
+		<TextBlock
+			Name="lblName"
+			Grid.Row="1"
+			TextWrapping="Wrap" 
+			/>
+		<TextBlock
+			Name="lblOperator"
+			Grid.Row="2"
+			TextWrapping="Wrap" 
+			Visibility="Collapsed"/>
+		<TextBlock
+			Name="lblNetwork"
+			Grid.Row="3"
+			TextWrapping="Wrap" 
+			Visibility="Collapsed"/>
+		<TextBlock
+			Name="lblDescription"
+			Grid.Row="4"
+			TextWrapping="Wrap" 
+			Visibility="Collapsed"/>
+			</StackPanel>
+		<TextBlock
+			Name="lblForward"
+			Text="Маршрут движения"
+			Grid.Row="1"  />
+		<ScrollViewer Grid.Row="2">
+			<StackPanel>
+		<StackPanel
+			Name="stkForward"
+			
+			ScrollViewer.VerticalScrollBarVisibility="Visible">
+			<StackPanel
+				Name="stkForwardWays" />
+			<TextBlock
+				Name="lblForwardStops"
+				Text="Остановки"
+				FontSize="14" MaxHeight="20" />
+			<StackPanel
+				Name="stkForwardStops" />
+		</StackPanel>
+		<TextBlock
+			Name="lblBackward"
+			Text="Обратный маршрут"
+			MaxHeight="20" />
+		<StackPanel
+			Name="stkBackward"
+			>
+			<StackPanel
+				Name="stkBackwardWays" />
+			<TextBlock
+				Name="lblBackwardStops"
+				Text="Остановки" MaxHeight="20" />
+			<StackPanel
+				Name="stkBackwardStops" />
+		</StackPanel>
+		</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</UserControl>
