@@ -39,6 +39,7 @@ using OsmSharp.Routing.Osm.Data.Processing;
 using OsmSharp.Routing.Osm.Interpreter;
 using OsmSharp.Routing.Route;
 using OsmSharp.Tools.Math.Geo;
+using RodSoft.OSMPT.PT.Online;
 
 namespace Demo.WindowsPresentation
 {
@@ -628,8 +629,9 @@ namespace Demo.WindowsPresentation
                foreach(VehicleData d in bus)
                {
                 DateTime lastTime;
-                if (DateTime.TryParse(d.Time, CultureInfo.GetCultureInfo("ru-RU"), DateTimeStyles.AllowWhiteSpaces, out lastTime))
-                {
+                        //if (DateTime.TryParse(d.Time, CultureInfo.GetCultureInfo("ru-RU"), DateTimeStyles.AllowWhiteSpaces, out lastTime))
+                        //{
+                        lastTime = d.Time;
                     if (DateTime.Now.AddMinutes(-5) <= lastTime)
                     {
                         BusMarker marker;
@@ -670,7 +672,7 @@ namespace Demo.WindowsPresentation
                             shape.UpdateVisual(false);
                         }
                     }
-                  }
+                  //}
                }
                BusMarker[] tempBusMarkers = busMarkers.Values.ToArray();
                bool isRemoved = false;
@@ -709,12 +711,13 @@ namespace Demo.WindowsPresentation
             {
                lock(trolleybus)
                {
-                  Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
+//                  Stuff.GetVilniusTransportData(TransportType.TrolleyBus, string.Empty, trolleybus);
                }
 
                lock(bus)
                {
-                  Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
+                        //                  Stuff.GetVilniusTransportData(TransportType.Bus, string.Empty, bus);
+                        Stuff.GetEttuTransportData(TransportType.Bus, string.Empty, bus);
                }
 
                transport.ReportProgress(100);
@@ -1004,7 +1007,7 @@ namespace Demo.WindowsPresentation
       {
          if(e.Key == System.Windows.Input.Key.Enter)
          {
-            GeoCoderStatusCode status = MainMap.SetCurrentPositionByKeywords(textBoxGeo.Text);
+            GeoCoderStatusCode status = MainMap.SetPositionByKeywords(textBoxGeo.Text);
             if(status != GeoCoderStatusCode.G_GEO_SUCCESS)
             {
                MessageBox.Show("Google Maps Geocoder can't find: '" + textBoxGeo.Text + "', reason: " + status.ToString(), "GMap.NET", MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -1249,13 +1252,14 @@ namespace Demo.WindowsPresentation
                   GMapMarker m2 = new GMapMarker(end);
                   m2.Shape = new CustomMarkerDemo(this, m2, "End: " + start.ToString());
 
-                  GMapMarker mRoute = new GMapMarker(_BuildedRoute.Points[0]);
-                  {
-                      mRoute.Route.AddRange(_BuildedRoute.Points);
-                      mRoute.RegenerateRouteShape(MainMap);
+                  GMapRoute mRoute = new GMapRoute(_BuildedRoute.Points);
+             //       MapRoute route = rp.GetRoute(start, end, false, false, (int)MainMap.Zoom);
+ //                 {
+                      //  mRoute.Route.AddRange(_BuildedRoute.Points);
+                      //mRoute.RegenerateRouteShape(MainMap);
 
-                      mRoute.ZIndex = -1;
-                  }
+                      //mRoute.ZIndex = -1;
+//                  }
 
                   MainMap.Markers.Add(m1);
                   MainMap.Markers.Add(m2);
@@ -1411,20 +1415,22 @@ namespace Demo.WindowsPresentation
 
               MainMap.Markers.Add(marker);
           }
-          GMapMarker mRoute = new GMapMarker(start);
-          {
-              List<Point> points = new List<Point>();
+          
+//            GMapRoute mRoute = new GMapRoute(start);
+          
+              List<PointLatLng> points = new List<PointLatLng>();
               foreach (OSMWay way in _Route.Ways)
               {
                   foreach (OSMPoint point in way.Points)
                   {
-                      mRoute.Route.Add(new PointLatLng(point.Latitude, point.Longtitude));
+                        points.Add(new PointLatLng(point.Latitude, point.Longtitude));
+                   //   mRoute.Route.Add(new PointLatLng(point.Latitude, point.Longtitude));
                   }
               }
-              mRoute.RegenerateRouteShape(MainMap);
-
+                //mRoute.RegenerateRouteShape(MainMap);
+                GMapRoute mRoute = new GMapRoute(points);
               mRoute.ZIndex = -1;
-          }
+          
           MainMap.Markers.Add(mRoute);
       }
 

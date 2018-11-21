@@ -112,6 +112,9 @@
     <Reference Include="GMap.NET.WindowsPresentation">
       <HintPath>E:\Rodsoft\maps\greatmaps_7891337ca86d\Demo.WindowsPresentation\bin\Debug\GMap.NET.WindowsPresentation.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OsmSharp.Osm.Data.SQLServer, Version=0.1.0.9999, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\OsmSharp.Osm.Data.SQLServer.dll</HintPath>
@@ -171,6 +174,8 @@
     <Compile Include="OSMObjects\OSMObjectBase.cs" />
     <Compile Include="OSMObjects\PlaceObject.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="PT\Online\Ettu.cs" />
+    <Compile Include="PT\Online\VehicleData.cs" />
     <Compile Include="Source\BusMarker.cs" />
     <Compile Include="Source\DemoStuff.cs" />
     <Compile Include="Source\LoadRoutes.cs" />
@@ -279,6 +284,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="sn.snk" />
   </ItemGroup>

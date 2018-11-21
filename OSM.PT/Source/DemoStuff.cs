@@ -9,6 +9,8 @@ using System.Data.Common;
 using GMap.NET.MapProviders;
 using System.Text;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using RodSoft.OSMPT.PT.Online;
 
 #if !PocketPC
 using System.Net.NetworkInformation;
@@ -29,26 +31,6 @@ using System.Data.SQLite;
 
 namespace Demo.WindowsForms
 {
-    public struct VehicleData
-    {
-        public int Id;
-        public double Lat;
-        public double Lng;
-        public string Line;
-        public string Operator;
-        public string Type;
-        public string Number;
-        public string Speed;
-        public string LastStop;
-        public string TrackType;
-        public string AreaName;
-        public string StreetName;
-        public string Time;
-        public double? Bearing;
-        public byte Red;
-        public byte Green;
-        public byte Blue;
-    }
 
    public enum TransportType
    {
@@ -220,13 +202,61 @@ namespace Demo.WindowsForms
 
       static readonly Random r = new Random();
 
-      /// <summary>
-      /// gets realtime data from public transport in city vilnius of lithuania
-      /// </summary>
-      /// <param name="type">type of transport</param>
-      /// <param name="line">linenum or null to get all</param>
-      /// <param name="ret"></param>
-      public static void GetVilniusTransportData(TransportType type, string line, List<VehicleData> ret)
+        public static void GetEttuTransportData(TransportType type, string line, List<VehicleData> ret)
+        {
+            string url = "http://map.ettu.ru/api/v2/tram/boards/?apiKey=111&order=1";
+            string json = string.Empty;
+            EttuServerMessage message = null;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
+            request.UserAgent = GMapProvider.UserAgent;
+            request.Timeout = 9000;// GMapProvider.TimeoutMs;
+            request.ReadWriteTimeout = 9000; //GMapProvider.TimeoutMs * 6;
+            request.Accept = "*/*";
+            request.KeepAlive = true;
+            HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+            request.CachePolicy = noCachePolicy;
+
+
+            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+            {
+                using (Stream responseStream = response.GetResponseStream())
+                {
+                    using (StreamReader read = new StreamReader(responseStream, Encoding.UTF8))
+                    {
+                        //doc.Load(read);
+                        json = read.ReadToEnd();
+                    }
+                }
+            }
+            if (json != null)
+            {
+                try
+                {
+                    message = JsonConvert.DeserializeObject<EttuServerMessage>(json);
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine("transport_DoWork: " + ex.ToString());
+                }
+            }
+            
+            ret.Clear();
+            if (message == null)
+                return;
+            for (int i = 0; i < message.Vehicles.Length; i++)
+            {
+                ret.Add(message.Vehicles[i].ToVehicleData());
+            }
+        }
+
+                        /// <summary>
+                        /// gets realtime data from public transport in city vilnius of lithuania
+                        /// </summary>
+                        /// <param name="type">type of transport</param>
+                        /// <param name="line">linenum or null to get all</param>
+                        /// <param name="ret"></param>
+                        public static void GetVilniusTransportData(TransportType type, string line, List<VehicleData> ret)
       {
          ret.Clear();
 
@@ -247,8 +277,9 @@ namespace Demo.WindowsForms
          url += "&app=GMap.NET.WindowsMobile";
 #endif
 
-         url = "http://www.edu-ekb.ru/gmap/resources/entities.vgeopoint/mar/,avtp_111,avtp_1,avtp_108,avtp_2,avtb_1,avtb_50,avtb_54,avtb_159,avtb_152,avtb_147,avtb_9,avtb_11,trol_1,tram_15,avtb_11м,avtb_56b,avtm_014,avtm_016,avtm_36,avtm_08,avtm_06,avtm_09,avtm_083,avtm_021,avtm_067,avtm_063,avtm_05,avtm_012,avtm_019,avtm_034,avtm_024,avtm_27,avtm_050,avtm_054,avtm_01,avtm_043,";//avtb_5д,avtb_10д,avtb_13д,avtb_21д,avtb_23д,avtb_45д,
-         string xml = string.Empty;
+//         url = " http://www.edu-ekb.ru/gmap/resources/entities.vgeopoint/mar/,avtp_111,avtp_1,avtp_108,avtp_2,avtb_1,avtb_50,avtb_54,avtb_159,avtb_152,avtb_147,avtb_9,avtb_11,trol_1,tram_15,avtb_11м,avtb_56b,avtm_014,avtm_016,avtm_36,avtm_08,avtm_06,avtm_09,avtm_083,avtm_021,avtm_067,avtm_063,avtm_05,avtm_012,avtm_019,avtm_034,avtm_024,avtm_27,avtm_050,avtm_054,avtm_01,avtm_043,";//avtb_5д,avtb_10д,avtb_13д,avtb_21д,avtb_23д,avtb_45д,
+            url = "http://map.ettu.ru/api/v2/tram/boards/?apiKey=111&order=1";
+            string xml = string.Empty;
          XmlDocument doc = new XmlDocument();
          {
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
@@ -383,19 +414,19 @@ namespace Demo.WindowsForms
                     d.Number = numberNode.InnerText;
                 XmlNode speedNode = node.SelectSingleNode("speed");
                 if (speedNode != null)
-                    d.Speed = speedNode.InnerText;
+                    Double.TryParse(speedNode.InnerText, out d.Speed);
 
                 XmlNode timeNode = node.SelectSingleNode("ptime");
                 if (timeNode != null)
-                    d.Time = timeNode.InnerText;
+                        DateTime.TryParse(timeNode.InnerText, CultureInfo.GetCultureInfo("ru-RU"), DateTimeStyles.AllowWhiteSpaces, out d.Time);
                 DateTime lastTime;
-                if (DateTime.TryParse(d.Time, CultureInfo.GetCultureInfo("ru-RU"), DateTimeStyles.AllowWhiteSpaces, out lastTime))
-                {
-                    if (DateTime.Now.AddMinutes(-5) < lastTime)
+                //if (DateTime.TryParse(d.Time, CultureInfo.GetCultureInfo("ru-RU"), DateTimeStyles.AllowWhiteSpaces, out lastTime))
+                //{
+                    if (DateTime.Now.AddMinutes(-5) < d.Time)
                     {
                         ret.Add(d);
                     }
-                }
+                //}
             }
 
             foreach(var it in items)
@@ -416,15 +447,15 @@ namespace Demo.WindowsForms
 
                      if(!string.IsNullOrEmpty(sit[5]))
                      {
-                        d.Time = sit[5];
+                        d.Time = DateTime.Parse(sit[5]);
 
-                        var t = DateTime.Parse(d.Time);
+                        var t = d.Time;
                         if(DateTime.Now - t > TimeSpan.FromMinutes(5))
                         {
                            continue;
                         }
 
-                        d.Time = t.ToLongTimeString();
+//                        d.Time = t.ToLongTimeString();
                      }
 
                      d.TrackType = sit[6];

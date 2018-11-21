@@ -1,6 +1,7 @@
 ﻿using System.Windows.Controls;
 using GMap.NET;
 using Demo.WindowsForms;
+using RodSoft.OSMPT.PT.Online;
 
 namespace Demo.WindowsPresentation.Controls
 {
@@ -23,8 +24,8 @@ namespace Demo.WindowsPresentation.Controls
 //         TrackType.Text = vl.TrackType;
 //         TimeGps.Text = vl.Time;
 //         Area.Text = vl.AreaName;
-         Speed.Text = vl.Speed;
-         Time.Text = vl.Time;
+         Speed.Text = vl.Speed.ToString();
+         Time.Text = vl.Time.ToLongTimeString();
       }
    }
 }
