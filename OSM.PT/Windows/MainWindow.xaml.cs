@@ -18,6 +18,7 @@ using Demo.WindowsPresentation.Cash;
 using Demo.WindowsPresentation.Controls;
 using Demo.WindowsPresentation.CustomMarkers;
 using Demo.WindowsPresentation.Source;
+using Demo.WindowsPresentation.Track;
 using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
@@ -1682,9 +1683,49 @@ namespace Demo.WindowsPresentation
            
            MainMap.Markers.Add(m1);
        }
-   }
 
-   public class MapValidationRule : ValidationRule
+        private void RibbonButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            Track.GpxDriver gpxDriver = new Track.GpxDriver(@"C:\Users\rys\Downloads\2018-11-30_11-18_Fri.gpx");
+            Track.Track track = gpxDriver.Parse();
+            if (track != null)
+            {
+                foreach (IList<TrackRecord> segment in track.Segments)
+                {
+                    if (segment.Count > 0)
+                    {
+                        GMapMarker m1 = new GMapMarker(new PointLatLng(segment[0].Lat, segment[0].Lng));
+                        m1.Shape = new CustomMarkerDemo(this, m1, "Start: ");
+
+                        GMapMarker m2 = new GMapMarker(new PointLatLng(segment.Last().Lat, segment.Last().Lng));
+                        m2.Shape = new CustomMarkerDemo(this, m2, "End: ");
+                        List<PointLatLng> points = new List<PointLatLng>(segment.Count);
+                        for (int i = 0; i < segment.Count; i++)
+                        {
+                            points.Add(new PointLatLng(segment[i].Lat, segment[i].Lng));
+                        }
+                        GMapRoute mRoute = new GMapRoute(points);
+                        //       MapRoute route = rp.GetRoute(start, end, false, false, (int)MainMap.Zoom);
+                        //                 {
+                        //  mRoute.Route.AddRange(_BuildedRoute.Points);
+                        //mRoute.RegenerateRouteShape(MainMap);
+
+                        //mRoute.ZIndex = -1;
+                        //                  }
+
+                        MainMap.Markers.Add(m1);
+                        MainMap.Markers.Add(m2);
+                        MainMap.Markers.Add(mRoute);
+
+                        MainMap.ZoomAndCenterMarkers(null);
+                    }
+                }
+            }
+        }
+
+    }
+
+    public class MapValidationRule : ValidationRule
    {
       bool UserAcceptedLicenseOnce = false;
       internal MainWindow Window;

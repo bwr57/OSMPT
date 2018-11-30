@@ -180,6 +180,10 @@
     <Compile Include="Source\DemoStuff.cs" />
     <Compile Include="Source\LoadRoutes.cs" />
     <Compile Include="Source\ReadOSMRoute.cs" />
+    <Compile Include="Track\ExtendedVehicleData.cs" />
+    <Compile Include="Track\GpxDriver.cs" />
+    <Compile Include="Track\Track.cs" />
+    <Compile Include="Track\TrackRecord.cs" />
     <Compile Include="Windows\Message.xaml.cs">
       <DependentUpon>Message.xaml</DependentUpon>
     </Compile>

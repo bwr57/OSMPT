@@ -105,7 +105,7 @@
                         <ribbon:RibbonMenuItem Header="Paste Special..." KeyTip="S"/>
                     </ribbon:RibbonMenuButton>
                     <ribbon:RibbonButton Label="Save" KeyTip="X" />
-                    <ribbon:RibbonButton Label="Add" KeyTip="C" />
+                    <ribbon:RibbonButton Label="Add" KeyTip="C" Click="RibbonButtonAdd_Click" />
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
             <!-- Ribbon Tab #2: -->
