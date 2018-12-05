@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Demo.WindowsPresentation.Track
+namespace RodSoft.OSM.Tracking
 {
     public class ExtendedVehicleData
     {

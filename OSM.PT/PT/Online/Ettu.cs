@@ -20,12 +20,10 @@ namespace RodSoft.OSMPT.PT.Online
         public VehicleData ToVehicleData(VehicleData vd)
         {
             if (vd == null)
-                vd = new VehicleData();
+                vd = new VehicleData(this.Lat, this.Lon);
             vd.Time = this.ATime;
             vd.Id = BOARD_ID;
             vd.Number = this.BOARD_NUM.ToString();
-            vd.Lat = this.Lat;
-            vd.Lng = this.Lon;
             vd.Speed = this.Velocity;
             vd.Bearing = this.Course + 90;
             if (vd.Bearing > 360)

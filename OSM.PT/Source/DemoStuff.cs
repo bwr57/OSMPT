@@ -202,9 +202,10 @@ namespace Demo.WindowsForms
 
       static readonly Random r = new Random();
 
-        public static void GetEttuTransportData(TransportType type, string line, List<VehicleData> ret)
+        public static void GetEttuTransportData(OSMOTRouteTypes transportType, string line, List<VehicleData> ret)
         {
-            string url = "http://map.ettu.ru/api/v2/tram/boards/?apiKey=111&order=1";
+            string transportTypeReqString = transportType == OSMOTRouteTypes.Tramway ? "tram" : "troll";
+            string url = "http://map.ettu.ru/api/v2/" + transportTypeReqString + "/boards/?apiKey=111&order=1";
             string json = string.Empty;
             EttuServerMessage message = null;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -246,7 +247,9 @@ namespace Demo.WindowsForms
                 return;
             for (int i = 0; i < message.Vehicles.Length; i++)
             {
-                ret.Add(message.Vehicles[i].ToVehicleData());
+                VehicleData vehicleData = message.Vehicles[i].ToVehicleData();
+                vehicleData.RouteType = transportType;
+                ret.Add(vehicleData);
             }
         }
 
@@ -343,10 +346,10 @@ namespace Demo.WindowsForms
                 XmlNode routeNode = node.SelectSingleNode("marshrut");
                 if (routeNode == null)
                     continue;
-                VehicleData d = new VehicleData();
+                VehicleData d = new VehicleData(latitude / 600000.0, longitude / 600000.0);
                 d.Id = pe;
-                d.Lat = latitude / 600000.0;
-                d.Lng = longitude / 600000.0;
+                //d.Latitude = latitude / 600000.0;
+                //d.Longitude = longitude / 600000.0;
                 d.Line = routeNode.InnerText;
 
                 string[] marshrutData = routeNode.InnerText.Split('_');
@@ -434,11 +437,11 @@ namespace Demo.WindowsForms
                var sit = it.Split(';');
                if(sit.Length == 8)
                {
-                  VehicleData d = new VehicleData();
+                  VehicleData d = new VehicleData(double.Parse(sit[0], CultureInfo.InvariantCulture), double.Parse(sit[1], CultureInfo.InvariantCulture));
                   {
                      d.Id = int.Parse( sit[2]);
-                     d.Lat = double.Parse(sit[0], CultureInfo.InvariantCulture);
-                     d.Lng = double.Parse(sit[1], CultureInfo.InvariantCulture);
+                     //d.Latitude = double.Parse(sit[0], CultureInfo.InvariantCulture);
+                     //d.Longitude = double.Parse(sit[1], CultureInfo.InvariantCulture);
                      d.Line = sit[3];
                      if(!string.IsNullOrEmpty(sit[4]))
                      {

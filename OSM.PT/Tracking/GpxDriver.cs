@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace Demo.WindowsPresentation.Track
+namespace RodSoft.OSM.Tracking
 {
     public class GpxDriver
     {
@@ -39,15 +39,17 @@ namespace Demo.WindowsPresentation.Track
                 XmlNodeList segmentsXmlNodes = root.LastChild.ChildNodes;
                 foreach (XmlNode segmentsXmlNode in segmentsXmlNodes)
                 {
-                    IList<TrackRecord> trackSegment = new List<TrackRecord>();
+
+                    IList<TrackPoint> trackSegment = track.AddSegment();
                     XmlNodeList pointsXmlNodes = segmentsXmlNode.ChildNodes;
                     foreach (XmlNode pointXmlNode in pointsXmlNodes)
                     {
-                        TrackRecord tr = new TrackRecord();
-                        if (!Double.TryParse(pointXmlNode.Attributes["lat"].Value, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out tr.Lat))
+                        double latitude, longitude;
+                        if (!Double.TryParse(pointXmlNode.Attributes["lat"].Value, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out latitude))
                             continue;
-                        if (!Double.TryParse(pointXmlNode.Attributes["lon"].Value, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out tr.Lng))
+                        if (!Double.TryParse(pointXmlNode.Attributes["lon"].Value, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out longitude))
                             continue;
+                        TrackPoint tr = new TrackPoint(latitude, longitude);
                         if (pointXmlNode.ChildNodes != null)
                         {
                             XmlNodeList trDataNodes = pointXmlNode.ChildNodes;
@@ -57,13 +59,13 @@ namespace Demo.WindowsPresentation.Track
                                 {
                                     case "ele":
                                         {
-                                            Double bearing = 0;
-                                            if (Double.TryParse(trDataNode.LastChild.Value, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out bearing))
+                                            Double elevation = 0;
+                                            if (Double.TryParse(trDataNode.LastChild.Value, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out elevation))
                                             {
-                                                tr.Bearing = bearing;
+                                                tr.Elevation = elevation;
                                                 break;
                                             }
-                                            tr.Bearing = null;
+                                            tr.Elevation = null;
                                             break;
                                         }
                                     case "time":
@@ -89,9 +91,8 @@ namespace Demo.WindowsPresentation.Track
                                 }
                             }
                         }
-                        trackSegment.Add(tr);
+                        track.AddTrackPoint(tr);
                     }
-                    track.Segments.Add(trackSegment);
                 }
             }
             return track;
