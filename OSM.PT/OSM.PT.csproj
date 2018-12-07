@@ -319,11 +319,11 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\osmsharp\Source\Core\OsmSharp.Routing\OsmSharp.Routing.csproj">
+    <ProjectReference Include="..\OsmSharp.Routing\OsmSharp.Routing.csproj">
       <Project>{87a55f64-1162-4df3-8b68-800e66d019ec}</Project>
       <Name>OsmSharp.Routing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\osmsharp\Source\Core\OsmSharp.Tools\OsmSharp.Tools.csproj">
+    <ProjectReference Include="..\OsmSharp.Tools\OsmSharp.Tools.csproj">
       <Project>{95c32f29-5537-4fb7-8c85-b754bc9903a9}</Project>
       <Name>OsmSharp.Tools</Name>
     </ProjectReference>
