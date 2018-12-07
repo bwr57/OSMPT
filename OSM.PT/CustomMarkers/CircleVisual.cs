@@ -1,19 +1,19 @@
-﻿using System;
+﻿using GMap.NET.WindowsPresentation;
+using RodSoft.OSM.Controls;
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using Demo.WindowsPresentation.Controls;
-using GMap.NET.WindowsPresentation;
 
 namespace Demo.WindowsPresentation.CustomMarkers
 {
-   public class CircleVisual : FrameworkElement
+    public class CircleVisual : FrameworkElement
    {
       public readonly Popup Popup = new Popup();
-      public readonly TrolleyTooltip Tooltip = new TrolleyTooltip();
+      public TooltipBase Tooltip;
       public readonly GMapMarker Marker;
       private int _Size = 22;
 
@@ -35,13 +35,16 @@ namespace Demo.WindowsPresentation.CustomMarkers
       {
          Marker = m;
          Marker.ZIndex = 100;
+            Tooltip = CreateTooltip();
 
-         Popup.AllowsTransparency = true;
+            Popup.AllowsTransparency = true;
          Popup.PlacementTarget = this;
          Popup.Placement = PlacementMode.Mouse;
          Popup.Child = Tooltip;
-         Popup.Child.Opacity = 0.777;
-
+            if (Popup.Child != null)
+            {
+                Popup.Child.Opacity = 0.777;
+            }
          SizeChanged += new SizeChangedEventHandler(CircleVisual_SizeChanged);
          MouseEnter += new System.Windows.Input.MouseEventHandler(CircleVisual_MouseEnter);
          MouseLeave += new System.Windows.Input.MouseEventHandler(CircleVisual_MouseLeave);
@@ -61,7 +64,12 @@ namespace Demo.WindowsPresentation.CustomMarkers
          Angle = null;
       }
 
-      void CircleVisual_SizeChanged(object sender, SizeChangedEventArgs e)
+        protected virtual TooltipBase CreateTooltip()
+        {
+            return null;
+        }
+
+        void CircleVisual_SizeChanged(object sender, SizeChangedEventArgs e)
       {
          Marker.Offset = new System.Windows.Point(-e.NewSize.Width/2, -e.NewSize.Height/2);
          scale.CenterX = -Marker.Offset.X;
@@ -91,21 +99,25 @@ namespace Demo.WindowsPresentation.CustomMarkers
          scale.ScaleX = 1;
       }
 
-      void CircleVisual_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-      {
-         if(!Popup.IsOpen)
-         {
-            Popup.IsOpen = true;
-         }
+        protected virtual void ProcessMouseEnter()
+        {
+            if (!Popup.IsOpen)
+            {
+                Popup.IsOpen = true;
+            }
+        }
 
-         Marker.ZIndex += 10000;
-         Cursor = Cursors.Hand;
+        void CircleVisual_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ProcessMouseEnter();
+            Marker.ZIndex += 10000;
+            Cursor = Cursors.Hand;
 
-         this.Effect = ShadowEffect;
+            this.Effect = ShadowEffect;
 
-         scale.ScaleY = 1.5;
-         scale.ScaleX = 1.5;
-      }
+            scale.ScaleY = 1.5;
+            scale.ScaleX = 1.5;
+        }
 
       public DropShadowEffect ShadowEffect;
 

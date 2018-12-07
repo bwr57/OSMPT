@@ -1,0 +1,34 @@
+﻿<gmap:TooltipBase x:Class="RodSoft.OSM.Tracking.Controls.TrackTooltip"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:gmap="clr-namespace:RodSoft.OSM.Controls"
+    Background="Transparent"  Width="326" IsHitTestVisible="False">
+    <Grid>
+        <Rectangle Stroke="Green" RadiusX="22" RadiusY="22" Fill="AliceBlue"></Rectangle>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="15"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+            <TextBlock Name="label5" HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="0" Grid.Column="1">Время:</TextBlock>
+            <TextBlock FontSize="16" FontWeight="Bold" Foreground="DarkBlue" Height="26.355" Name="Time" VerticalAlignment="Top"  Grid.Row="0" Grid.Column="2"></TextBlock>
+            <TextBlock Name="label1"  HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="1" Grid.Column="1">Время в пути:</TextBlock>
+            <TextBlock Name="tbxTimeInTrip" VerticalAlignment="Top" Height="50" Foreground="Red" FontSize="16" FontWeight="Bold" Grid.Row="1" Grid.Column="2"></TextBlock>
+            <TextBlock Name="label2" HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="2" Grid.Column="1">Растояние:</TextBlock>
+            <TextBlock FontSize="16" FontWeight="Bold" Foreground="MediumBlue" Name="tbxDistance" TextWrapping="WrapWithOverflow"  VerticalAlignment="Top" Grid.Row="2" Grid.Column="2"></TextBlock>
+            <TextBlock Name="label3" HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Bottom"  Grid.Row="3" Grid.Column="1">Высота:</TextBlock>
+            <TextBlock FontSize="16" FontWeight="Bold" Foreground="Maroon" Name="tbxElevation" Height="24.276" VerticalAlignment="Top"  Grid.Row="3" Grid.Column="2"></TextBlock>
+            <TextBlock Name="label4" HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Bottom"  Grid.Row="4" Grid.Column="1">Скорость:</TextBlock>
+            <TextBlock FontSize="16" FontWeight="Bold" Foreground="DarkBlue" Height="26.355" Name="Speed" VerticalAlignment="Top"  Grid.Row="4" Grid.Column="2" ></TextBlock>
+        </Grid>
+    </Grid>
+</gmap:TooltipBase>

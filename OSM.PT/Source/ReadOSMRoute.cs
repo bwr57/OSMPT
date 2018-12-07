@@ -347,7 +347,17 @@ namespace Demo.WindowsForms
         , LongDistance = 1024
         , HighSpeed = 2048
     }
-    
+    public static class OSMOTHelper
+    {
+//        public static IDictionary<uint, string>
+        public static string GetRouteTypeName(OSMOTRouteTypes osmOTRouteType)
+        {
+            if (osmOTRouteType == OSMOTRouteTypes.Tramway)
+                return "Трамвай";
+            return "";
+
+        }
+    }
     public class OSMOTRouteStop : OSMPoint
     {
     	private bool _IsForward = true;

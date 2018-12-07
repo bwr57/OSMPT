@@ -1,33 +1,35 @@
-﻿<UserControl x:Class="Demo.WindowsPresentation.Controls.TrolleyTooltip"
+﻿<gmap:TooltipBase x:Class="RodSoft.OSM.PT.Controls.TrolleyTooltip"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gmap="clr-namespace:RodSoft.OSM.Controls"
     Background="Transparent"  Width="326" IsHitTestVisible="False">
     <Grid>
         <Rectangle Stroke="Green" RadiusX="22" RadiusY="22" Fill="AliceBlue"></Rectangle>
         <Grid>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="15"/>
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="15"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>
             </Grid.RowDefinitions>
-            <TextBlock Name="labelMarshrutType" FontSize="18" Height="50"   FontWeight ="Bold" TextWrapping="WrapWithOverflow"  Foreground="Navy" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1"></TextBlock >
-            <TextBlock Name="label1" Margin="2" HorizontalAlignment="Right" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="1" Grid.Column="0">Маршрут:</TextBlock>
-            <TextBlock Margin="2" Name="LineNum" VerticalAlignment="Top" Height="50" Foreground="Red" FontSize="16" FontWeight="Bold" Grid.Row="1" Grid.Column="1"></TextBlock>
-            <TextBlock Name="label2" Margin="2" HorizontalAlignment="Right" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="2" Grid.Column="0">Перевозчик:</TextBlock>
-            <TextBlock FontSize="16" FontWeight="Bold" Foreground="MediumBlue" Margin="2" Name="Operator" TextWrapping="WrapWithOverflow"  VerticalAlignment="Top" Grid.Row="2" Grid.Column="1"></TextBlock>
-            <TextBlock Name="label3" Margin="2" HorizontalAlignment="Right" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="3" Grid.Column="0">Гос.номер:</TextBlock>
-            <TextBlock FontSize="16" FontWeight="Bold" Foreground="Maroon" Margin="2" Name="Number" Height="24.276" VerticalAlignment="Top"  Grid.Row="3" Grid.Column="1"></TextBlock>
-            <TextBlock Name="label4" Margin="2" HorizontalAlignment="Right" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="4" Grid.Column="0">Скорость:</TextBlock>
-            <TextBlock FontSize="16" FontWeight="Bold" Foreground="DarkBlue" Height="26.355" Margin="2" Name="Speed" VerticalAlignment="Top"  Grid.Row="4" Grid.Column="1" ></TextBlock>
-            <TextBlock Name="label5" Margin="2" HorizontalAlignment="Right" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="5" Grid.Column="0">Время:</TextBlock>
-            <TextBlock FontSize="16" FontWeight="Bold" Foreground="DarkBlue" Height="26.355" Margin="2" Name="Time" VerticalAlignment="Top"  Grid.Row="5" Grid.Column="1"></TextBlock>
+            <TextBlock Name="labelMarshrutType" FontSize="18" Height="30"   FontWeight ="Bold" TextWrapping="WrapWithOverflow"  Foreground="Navy" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"></TextBlock >
+<!--            <TextBlock Name="label1" Margin="2" HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="1" Grid.Column="0">Маршрут:</TextBlock>
+            <TextBlock Margin="2" Name="LineNum" VerticalAlignment="Top" Height="50" Foreground="Red" FontSize="16" FontWeight="Bold" Grid.Row="1" Grid.Column="1"></TextBlock> -->
+            <TextBlock Name="label2" Margin="2" HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="1" Grid.Column="1">Перевозчик:</TextBlock>
+            <TextBlock FontSize="16" FontWeight="Bold" Foreground="MediumBlue" Margin="2" Name="Operator" TextWrapping="WrapWithOverflow"  VerticalAlignment="Top" Grid.Row="1" Grid.Column="2"></TextBlock>
+            <TextBlock Name="label3" Margin="2" HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="2" Grid.Column="1">Гос.номер:</TextBlock>
+            <TextBlock FontSize="16" FontWeight="Bold" Foreground="Maroon" Margin="2" Name="Number" Height="24.276" VerticalAlignment="Top"  Grid.Row="2" Grid.Column="2"></TextBlock>
+            <TextBlock Name="label4" Margin="2" HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="3" Grid.Column="1">Скорость:</TextBlock>
+            <TextBlock FontSize="16" FontWeight="Bold" Foreground="DarkBlue" Height="26.355" Margin="2" Name="Speed" VerticalAlignment="Top"  Grid.Row="3" Grid.Column="2" ></TextBlock>
+            <TextBlock Name="label5" Margin="2" HorizontalAlignment="Left" FontSize="16" Foreground="Navy" VerticalAlignment="Top"  Grid.Row="4" Grid.Column="1">Время:</TextBlock>
+            <TextBlock FontSize="16" FontWeight="Bold" Foreground="DarkBlue" Height="26.355" Margin="2" Name="Time" VerticalAlignment="Top"  Grid.Row="4" Grid.Column="2"></TextBlock>
         </Grid>
     </Grid>
-</UserControl>
+</gmap:TooltipBase>

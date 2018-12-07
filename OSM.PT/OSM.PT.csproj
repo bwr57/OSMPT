@@ -112,6 +112,9 @@
     <Reference Include="GMap.NET.WindowsPresentation">
       <HintPath>E:\Rodsoft\maps\greatmaps_7891337ca86d\Demo.WindowsPresentation\bin\Debug\GMap.NET.WindowsPresentation.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Windows.Shell">
+      <HintPath>..\packages\Shell\Microsoft.Windows.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -169,7 +172,17 @@
     <Compile Include="Controls\StopTooltip.xaml.cs">
       <DependentUpon>StopTooltip.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TooltipBase.cs" />
+    <Compile Include="CustomMarkers\PTVehicleVisual.cs" />
+    <Compile Include="Tracking\Controls\SelectStartPointDelegate.cs" />
+    <Compile Include="Tracking\Controls\TrackPartInfoUserControl.xaml.cs">
+      <DependentUpon>TrackPartInfoUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tracking\Controls\TrackTooltip.xaml.cs">
+      <DependentUpon>TrackTooltip.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomMarkers\StopVisual.cs" />
+    <Compile Include="Tracking\Controls\TrackPointVisual.cs" />
     <Compile Include="OSMObjects\OSMArea.cs" />
     <Compile Include="OSMObjects\OSMObjectBase.cs" />
     <Compile Include="OSMObjects\PlaceObject.cs" />
@@ -180,6 +193,11 @@
     <Compile Include="Source\DemoStuff.cs" />
     <Compile Include="Source\LoadRoutes.cs" />
     <Compile Include="Source\ReadOSMRoute.cs" />
+    <Compile Include="Tracking\ExtendedVehicleData.cs" />
+    <Compile Include="Tracking\GpxDriver.cs" />
+    <Compile Include="Tracking\Track.cs" />
+    <Compile Include="Tracking\TrackPoint.cs" />
+    <Compile Include="Tracking\Controls\TrackPointMarker.cs" />
     <Compile Include="Windows\Message.xaml.cs">
       <DependentUpon>Message.xaml</DependentUpon>
     </Compile>
@@ -193,6 +211,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\StopTooltip.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tracking\Controls\TrackPartInfoUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tracking\Controls\TrackTooltip.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
