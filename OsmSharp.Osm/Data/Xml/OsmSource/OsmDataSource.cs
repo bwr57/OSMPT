@@ -28,6 +28,7 @@ using OsmSharp.Osm.Sources;
 using OsmSharp.Osm.Filters;
 using System.Xml;
 using System.IO;
+using OsmSharp.Osm.Xml.v0_6.JSON;
 
 namespace OsmSharp.Osm.Data.Raw.XML.OsmSource
 {
@@ -86,6 +87,22 @@ namespace OsmSharp.Osm.Data.Raw.XML.OsmSource
         {
             
         }
+
+        public OsmDataSource(GeoCoordinateBox coordinateBox, JsonMessage jsonMessage)
+        {
+            _id = Guid.NewGuid();
+
+            _read = false;
+            _nodes = new Dictionary<long, Node>();
+            _ways = new Dictionary<long, Way>();
+            _relations = new Dictionary<long, Relation>();
+
+            _ways_per_node = new Dictionary<long, List<long>>();
+            _relations_per_member = new Dictionary<long, List<long>>();
+            _closed_change_set = new List<long>();
+            ReadFromJson(coordinateBox, jsonMessage);
+        }
+
 
         #region Write/Read functions
 
@@ -205,6 +222,67 @@ namespace OsmSharp.Osm.Data.Raw.XML.OsmSource
                         _bb = osm.bound.ConvertFrom();
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Reads all the data from the osm document if needed.
+        /// </summary>
+        private void ReadFromJson(GeoCoordinateBox coordinateBox, JsonMessage jsonMessage)
+        {
+            if (!_read)
+            {
+                _read = true;
+
+
+                if (jsonMessage != null && jsonMessage.Elements != null)
+                {
+                    foreach (OsmObject element in jsonMessage.Elements)
+                    {
+                        switch (element.Type)
+                        {
+                            case "node":
+                                {
+                                    Node new_node = Convertor.ConvertNodeFrom(element);
+                                    if (new_node != null)
+                                        _nodes.Add(new_node.Id, new_node);
+
+                                    this.RegisterChangeSetId(new_node.ChangeSetId);
+                                    break;
+                                }
+                            case "way":
+                                {
+                                    Way newWay = Convertor.ConvertWayFrom(element, this);
+                                    if (newWay != null)
+                                    {
+
+                                        _ways.Add(newWay.Id, newWay);
+
+                                        this.RegisterNodeWayRelation(newWay);
+                                        this.RegisterChangeSetId(newWay.ChangeSetId);
+                                    }
+                                    break;
+                                }
+                        }
+                    }
+
+                    //if (osm.relation != null)
+                    //{
+                    //    foreach (Osm.Xml.v0_6.relation relation in osm.relation)
+                    //    {
+                    //        Relation new_relation = relation.ConvertFrom(this, this, this);
+                    //        if (new_relation != null)
+                    //        {
+                    //            _relations.Add(new_relation.Id, new_relation);
+
+                    //            this.RegisterRelationMemberRelation(new_relation);
+                    //            this.RegisterChangeSetId(new_relation.ChangeSetId);
+                    //        }
+                    //    }
+                    //}
+
+                }
+                _bb = coordinateBox;
             }
         }
 

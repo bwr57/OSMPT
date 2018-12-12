@@ -22,6 +22,7 @@ using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
 using Microsoft.Windows.Controls.Ribbon;
 using OsmSharp.Osm;
+using OsmSharp.Osm.Data;
 using OsmSharp.Osm.Data.Core.Processor.Filter.Sort;
 using OsmSharp.Osm.Data.PBF.Raw.Processor;
 using OsmSharp.Osm.Data.SQLServer.SimpleSchema;
@@ -37,6 +38,7 @@ using OsmSharp.Routing.Osm.Interpreter;
 using OsmSharp.Routing.Route;
 using OsmSharp.Tools.Math.Geo;
 using RodSoft.OSM.PT.Online.Controls;
+using RodSoft.OSM.Source;
 using RodSoft.OSM.Tracking;
 using RodSoft.OSM.Tracking.Controls;
 using RodSoft.OSMPT.PT.Online;
@@ -1553,7 +1555,8 @@ namespace Demo.WindowsPresentation
                 //sqlServerSource.Pull();
                 // pre-process the data.
                 DataProcessorFilterSort sorter = new DataProcessorFilterSort();
-                sorter.RegisterSource(data_processor_source);
+//                sorter.RegisterSource(data_processor_source);
+                sorter.RegisterSource(_OsmDataSource);
                 _target_data.RegisterSource(sorter);
                 _target_data.Pull();
             }
@@ -1880,6 +1883,12 @@ namespace Demo.WindowsPresentation
         private void TrackPartInfo_FixRequest(UIElement sender)
         {
             _IsTrackSelecting = false;
+        }
+        private IDataSource _OsmDataSource;
+        private void RibbonButtonLoadRoads_Click(object sender, RoutedEventArgs e)
+        {
+            GeoCoordinateBox area = new GeoCoordinateBox(new GeoCoordinate(56.86, 60.58), new GeoCoordinate(56.83, 60.68));
+            _OsmDataSource = LoadRoadsJosm.LoadRoutes(area);
         }
 
         protected virtual void InfoPanel_CloseRequest(UIElement sender)

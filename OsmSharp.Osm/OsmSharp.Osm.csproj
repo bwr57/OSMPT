@@ -311,6 +311,8 @@
     <Compile Include="Way.cs" />
     <Compile Include="Xml\OsmDocument.cs" />
     <Compile Include="Xml\v0_6\Extensions.cs" />
+    <Compile Include="Xml\v0_6\JSON\Convertor.cs" />
+    <Compile Include="Xml\v0_6\JSON\JsonMessage.cs" />
     <Compile Include="Xml\v0_6\osm.cs">
       <DependentUpon>osm.xsd</DependentUpon>
     </Compile>
