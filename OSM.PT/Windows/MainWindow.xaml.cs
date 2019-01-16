@@ -1555,8 +1555,8 @@ namespace Demo.WindowsPresentation
                 //sqlServerSource.Pull();
                 // pre-process the data.
                 DataProcessorFilterSort sorter = new DataProcessorFilterSort();
-//                sorter.RegisterSource(data_processor_source);
-                sorter.RegisterSource(_OsmDataSource);
+                sorter.RegisterSource(data_processor_source);
+//                sorter.RegisterSource(_OsmDataSource);
                 _target_data.RegisterSource(sorter);
                 _target_data.Pull();
             }
@@ -1832,6 +1832,49 @@ namespace Demo.WindowsPresentation
             }
             return points;
         }
+
+        protected virtual string FormStringFromTrack(Track track, TrackPoint firstPoint, TrackPoint lastPoint)
+        {
+            bool isFirstFound = false;
+
+            if (track == null)
+                return null;
+            string output = "Время,Дистанция,Скорость";
+            foreach (IList<TrackPoint> segment in track.Segments)
+            {
+                if (segment.Count > 0)
+                {
+                    for (int i = 0; i < segment.Count; i++)
+                    {
+                        if (firstPoint == null)
+                        {
+                            firstPoint = segment[i];
+                            isFirstFound = true;
+                        }
+                        if (_FirstPoint == segment[i])
+                            isFirstFound = true;
+                        if ((lastPoint != null && lastPoint == segment[i]) && !isFirstFound)
+                        {
+                            return output;
+                        }
+                        if (isFirstFound)
+                        {
+                            if (lastPoint == null || lastPoint != segment[i])
+                            {
+                                output += String.Format("\n{0}, {1}, {2}", segment[i].Time.Subtract(firstPoint.Time).TotalSeconds, (segment[i].DistanceFromStart - firstPoint.DistanceFromStart).Value, segment[i].Speed);
+                            }
+                            if (lastPoint != null && lastPoint == segment[i])
+                            {
+                    output += String.Format("\n{0}, {1}, {2}", segment[i].Time.Subtract(firstPoint.Time).TotalSeconds, (segment[i].DistanceFromStart - firstPoint.DistanceFromStart).Value, segment[i].Speed);
+                    return output;
+                            }
+                        }
+                    }
+                }
+            }
+            return output;
+        }
+
         TrackPointVisual _FirstTrackPointVisual;
 
         protected virtual void ShowSelectedTrack()
@@ -1889,6 +1932,22 @@ namespace Demo.WindowsPresentation
         {
             GeoCoordinateBox area = new GeoCoordinateBox(new GeoCoordinate(56.86, 60.58), new GeoCoordinate(56.83, 60.68));
             _OsmDataSource = LoadRoadsJosm.LoadRoutes(area);
+        }
+
+        private void tpiTrackPartInfo_SaveRequest(UIElement sender)
+        {
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.DefaultExt = ".csv";
+            dlg.Filter = "Трек (.csv)|*.csv";
+            Nullable<bool> result = dlg.ShowDialog();
+            if (result != true)
+            {
+                return;
+            }
+            string output = FormStringFromTrack(_Track, _FirstPoint, _LastPoint);
+            if (File.Exists(dlg.FileName))
+                File.Delete(dlg.FileName);
+            File.AppendAllText(dlg.FileName, output);
         }
 
         protected virtual void InfoPanel_CloseRequest(UIElement sender)

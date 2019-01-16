@@ -21,6 +21,7 @@ namespace RodSoft.OSM.Tracking.Controls
     {
         public event ClosePanelRequestDelegate FixRequest;
         public event ClosePanelRequestDelegate CloseRequest;
+        public event ClosePanelRequestDelegate SaveRequest;
 
         public TrackPartInfoUserControl()
         {
@@ -46,6 +47,11 @@ namespace RodSoft.OSM.Tracking.Controls
         private void LabelFix_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             FixRequest?.Invoke(this);
+        }
+
+        private void LabelSave_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            SaveRequest?.Invoke(this);
         }
     }
 }

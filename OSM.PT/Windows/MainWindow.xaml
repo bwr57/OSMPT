@@ -271,7 +271,7 @@
                 <Button Margin="7,0,6,6" Name="button12" Height="21.04" VerticalAlignment="Bottom" Click="button12_Click">Add route</Button>
             </Grid>
         </GroupBox>
-                <tracking:TrackPartInfoUserControl Visibility="Collapsed" x:Name="tpiTrackPartInfo" x:Uid="tpiTrackPartInfo" CloseRequest="InfoPanel_CloseRequest" FixRequest="TrackPartInfo_FixRequest" 
+                <tracking:TrackPartInfoUserControl Visibility="Collapsed" x:Name="tpiTrackPartInfo" x:Uid="tpiTrackPartInfo" CloseRequest="InfoPanel_CloseRequest" FixRequest="TrackPartInfo_FixRequest" SaveRequest="tpiTrackPartInfo_SaveRequest"
                                            Height="130" HorizontalAlignment="Right" Margin="0,385,11,283" VerticalAlignment="Top" Width="169" />
 
             </Grid>
