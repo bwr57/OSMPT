@@ -197,6 +197,8 @@
     <Compile Include="Source\ReadOSMRoute.cs" />
     <Compile Include="Tracking\ExtendedVehicleData.cs" />
     <Compile Include="Tracking\GpxDriver.cs" />
+    <Compile Include="Tracking\Registrator\GeoLocationRegistrator.cs" />
+    <Compile Include="Tracking\Registrator\IGeoPositionRegistrtor.cs" />
     <Compile Include="Tracking\Track.cs" />
     <Compile Include="Tracking\TrackPoint.cs" />
     <Compile Include="Tracking\Controls\TrackPointMarker.cs" />
@@ -362,6 +364,17 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="OSMObjects\NewFolder1\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="LocationApiLib">
+      <Guid>{4486DF98-22A5-4F6B-BD5C-8CADCEC0A6DE}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -17,6 +17,7 @@ using Demo.WindowsPresentation.Cash;
 using Demo.WindowsPresentation.Controls;
 using Demo.WindowsPresentation.CustomMarkers;
 using Demo.WindowsPresentation.Source;
+using Demo.WindowsPresentation.Tracking.Registrator;
 using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
@@ -225,6 +226,10 @@ namespace Demo.WindowsPresentation
             // perfromance test
             timer.Interval = TimeSpan.FromMilliseconds(44);
             timer.Tick += new EventHandler(timer_Tick);
+
+            timerShowCurrentPosition.Interval = TimeSpan.FromMilliseconds(1000);
+            timerShowCurrentPosition.Tick += new EventHandler(RegisterGeoPosition);
+            timerShowCurrentPosition.Start();
 
             // transport demo
             transport.DoWork += new DoWorkEventHandler(transport_DoWork);
@@ -1959,9 +1964,21 @@ namespace Demo.WindowsPresentation
             routes.Visibility = Visibility.Visible;
             _IsTrackSelecting = false;
         }
+
+        DispatcherTimer timerShowCurrentPosition = new DispatcherTimer();
+        public IGeoPositionRegistrator _GeoPositionRegistrator = new GeoLocationRegistrator();
+
+        public void RegisterGeoPosition(object sender, EventArgs e)
+        {
+            if (_GeoPositionRegistrator == null)
+                return;
+            TrackPoint trackPoint = _GeoPositionRegistrator.GetCurrentPosition();
+            
+        }
+
     }
 
-   public class MapValidationRule : ValidationRule
+    public class MapValidationRule : ValidationRule
    {
       bool UserAcceptedLicenseOnce = false;
       internal MainWindow Window;
