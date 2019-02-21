@@ -18,6 +18,7 @@ using Demo.WindowsPresentation.Controls;
 using Demo.WindowsPresentation.CustomMarkers;
 using Demo.WindowsPresentation.Source;
 using Demo.WindowsPresentation.Tracking.Registrator;
+using Demo.WindowsPresentation.Tracking.Telemetry;
 using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
@@ -1966,14 +1967,67 @@ namespace Demo.WindowsPresentation
         }
 
         DispatcherTimer timerShowCurrentPosition = new DispatcherTimer();
-        public IGeoPositionRegistrator _GeoPositionRegistrator = new GeoLocationRegistrator();
+        public IGeoPositionRegistrator _GeoPositionRegistrator = new GeoLocationRegistratorNet();
+        protected CircleVisual _CurrentPositionMarker;
+        protected Brush _CurrentPositionMarkerBrushInactive = new SolidColorBrush(Color.FromRgb(100, 100, 100));
+        protected Brush _CurrentPositionMarkerBrushActive = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+        protected TrackPoint _PreviousTrackPoint;
+        protected TrackMessageSender _TrackMessageSender;
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (_GeoPositionRegistrator != null)
+            {
+                _GeoPositionRegistrator.Dispose();
+                _GeoPositionRegistrator = null;
+            }
+            if(_TrackMessageSender != null)
+            {
+                _TrackMessageSender.Dispose();
+                _TrackMessageSender = null;
+            }
+        }
 
         public void RegisterGeoPosition(object sender, EventArgs e)
         {
             if (_GeoPositionRegistrator == null)
                 return;
+            if(_GeoPositionRegistrator.GetRegistratorStatus() != GeoPositionRegistratorStatus.Active)
+            {
+                if (_CurrentPositionMarker != null)
+                {
+                    _CurrentPositionMarker.Background = _CurrentPositionMarkerBrushInactive;
+                }
+ //               return;
+            }
             TrackPoint trackPoint = _GeoPositionRegistrator.GetCurrentPosition();
-            
+            if(_CurrentPositionMarker == null)
+            {
+                _CurrentPositionMarker = new CircleVisual(new GMapMarker(new PointLatLng(trackPoint.Latitude, trackPoint.Longitude)), _CurrentPositionMarkerBrushActive);
+                MainMap.Markers.Add(_CurrentPositionMarker.Marker);
+            }
+            else
+            {
+                _CurrentPositionMarker.Marker.Position = new PointLatLng(trackPoint.Latitude, trackPoint.Longitude);
+            }
+            if (DateTime.Now.Subtract(trackPoint.Time).Seconds > 2)
+            {
+                _CurrentPositionMarker.Background = _CurrentPositionMarkerBrushInactive;
+                _CurrentPositionMarker.UpdateVisual(true);
+            }
+            else
+            {
+                _CurrentPositionMarker.Background = _CurrentPositionMarkerBrushActive;
+                _CurrentPositionMarker.UpdateVisual(true);
+            }
+            if(_TrackMessageSender == null)
+            {
+                _TrackMessageSender = new TrackMessageSender("http://track.t1604.ru/api/track.php");
+                _TrackMessageSender.Timeout = 3000;
+            }
+            TrackMessage trackMessage = new TrackMessage() { Time = DateTime.Now, Vehicle = "С513РК95RUS", TrackPoint = trackPoint };
+            _TrackMessageSender.SendMessage(trackMessage);
+//            MainMap.ZoomAndCenterMarkers(null);
         }
 
     }

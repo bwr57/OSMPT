@@ -7,8 +7,9 @@ using LocationApiLib;
 
 namespace Demo.WindowsPresentation.Tracking.Registrator
 {
-    public class GeoLocationRegistrator : IGeoPositionRegistrator
+    public class GeoLocationRegistrator : IGeoPositionRegistrator, IDisposable
     {
+
         protected LatLongReportFactory _RegistratorService;
 
         public uint Interval
@@ -39,6 +40,14 @@ namespace Demo.WindowsPresentation.Tracking.Registrator
             TrackPoint trackPoint = new TrackPoint(report.Latitude, report.Longitude);
             trackPoint.Time = report.Timestamp;
             return trackPoint;
+        }
+
+        public void Dispose()
+        {
+            if(_RegistratorService != null)
+            {
+                _RegistratorService = null;
+            }
         }
     }
 }

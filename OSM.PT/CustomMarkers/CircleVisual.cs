@@ -62,6 +62,7 @@ namespace Demo.WindowsPresentation.CustomMarkers
 
          Background = background;
          Angle = null;
+            Marker.Shape = this;
       }
 
         protected virtual TooltipBase CreateTooltip()

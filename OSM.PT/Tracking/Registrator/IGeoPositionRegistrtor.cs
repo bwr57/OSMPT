@@ -15,7 +15,7 @@ namespace Demo.WindowsPresentation.Tracking.Registrator
         Initializing = 4
     }
 
-    public interface IGeoPositionRegistrator
+    public interface IGeoPositionRegistrator : IDisposable
     {
         TrackPoint GetCurrentPosition();
         GeoPositionRegistratorStatus GetRegistratorStatus();

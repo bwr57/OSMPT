@@ -1,0 +1,1 @@
+Time=21.02.2019+14.21.49&Vehicle=%d0%a1513%d0%a0%d0%9a95RUS&GPS=1&Lat=NaN&Lng=NaN&Altitude=NaN&Speed=NaN&Bearing=NaN

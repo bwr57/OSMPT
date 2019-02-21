@@ -115,6 +115,9 @@
     <Reference Include="Microsoft.Windows.Shell">
       <HintPath>..\packages\Shell\Microsoft.Windows.Shell.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ExtendedLinguisticServices, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-ExtendedLinguisticServices.1.1.1\lib\Microsoft.WindowsAPICodePack.ExtendedLinguisticServices.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -136,6 +139,8 @@
     <Reference Include="System.Data.SQLite">
       <HintPath>E:\Rodsoft\maps\greatmaps_7891337ca86d\Demo.WindowsPresentation\bin\Debug\System.Data.SQLite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Device" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="UIAutomationProvider">
@@ -176,6 +181,7 @@
     <Compile Include="CustomMarkers\PTVehicleVisual.cs" />
     <Compile Include="OSMObjects\ЩыьВфефЫщгксу.cs" />
     <Compile Include="Source\LoadRoadsJosm.cs" />
+    <Compile Include="Tracking\Telemetry\CashService.cs" />
     <Compile Include="Tracking\Controls\SelectStartPointDelegate.cs" />
     <Compile Include="Tracking\Controls\TrackPartInfoUserControl.xaml.cs">
       <DependentUpon>TrackPartInfoUserControl.xaml</DependentUpon>
@@ -198,7 +204,15 @@
     <Compile Include="Tracking\ExtendedVehicleData.cs" />
     <Compile Include="Tracking\GpxDriver.cs" />
     <Compile Include="Tracking\Registrator\GeoLocationRegistrator.cs" />
+    <Compile Include="Tracking\Registrator\GeoLocationRegistratorNet.cs" />
     <Compile Include="Tracking\Registrator\IGeoPositionRegistrtor.cs" />
+    <Compile Include="Tracking\Telemetry\ServiceClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Tracking\Telemetry\TrackMessageSender.cs" />
+    <Compile Include="Tracking\Telemetry\Serialization\GPSMessageSerializator.cs" />
+    <Compile Include="Tracking\Telemetry\TrackMessage.cs" />
+    <Compile Include="Tracking\Telemetry\Serialization\TrackMessageSerializator.cs" />
     <Compile Include="Tracking\Track.cs" />
     <Compile Include="Tracking\TrackPoint.cs" />
     <Compile Include="Tracking\Controls\TrackPointMarker.cs" />
