@@ -7,6 +7,7 @@ using System.Text;
 
 namespace RodSoft.OSM.Tracking
 {
+    [Serializable]
     public class TrackPoint : VehicleData
     {
         public Meter DistanceFromStart

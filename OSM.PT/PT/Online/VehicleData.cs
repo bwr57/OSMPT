@@ -4,6 +4,7 @@ using System;
 
 namespace RodSoft.OSMPT.PT.Online
 {
+    [Serializable]
     public class VehicleData : GeoCoordinate
     {
         public OSMOTRouteTypes RouteType;

@@ -1973,6 +1973,7 @@ namespace Demo.WindowsPresentation
         protected Brush _CurrentPositionMarkerBrushActive = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         protected TrackPoint _PreviousTrackPoint;
         protected TrackMessageSender _TrackMessageSender;
+        protected CashService _TruckStatusCashService;
 
         private void Window_Closed(object sender, EventArgs e)
         {
@@ -2020,10 +2021,15 @@ namespace Demo.WindowsPresentation
                 _CurrentPositionMarker.Background = _CurrentPositionMarkerBrushActive;
                 _CurrentPositionMarker.UpdateVisual(true);
             }
+            if(_TruckStatusCashService == null)
+            {
+                _TruckStatusCashService = new CashService() { CashFolder = "Cash" };
+            }
             if(_TrackMessageSender == null)
             {
                 _TrackMessageSender = new TrackMessageSender("http://track.t1604.ru/api/track.php");
                 _TrackMessageSender.Timeout = 3000;
+                _TrackMessageSender.CashService = _TruckStatusCashService;
             }
             TrackMessage trackMessage = new TrackMessage() { Time = DateTime.Now, Vehicle = "С513РК95RUS", TrackPoint = trackPoint };
             _TrackMessageSender.SendMessage(trackMessage);

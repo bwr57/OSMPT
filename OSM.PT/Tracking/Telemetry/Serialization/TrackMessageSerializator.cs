@@ -31,5 +31,10 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry.Serialization
         {
             _BinaryFormatter.Serialize(stream, obj);
         }
+
+        public TrackMessage DeserializeObject<TrackMessage>(Stream stream)
+        {
+            return (TrackMessage) _BinaryFormatter.Deserialize(stream);
+        }
     }
 }
