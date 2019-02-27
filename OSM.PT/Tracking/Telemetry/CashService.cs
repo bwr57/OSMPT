@@ -74,7 +74,7 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
                 if(long.TryParse(fileName, out ticks))
                 {
                     CashedDataRef cashedDataRef = new CashedDataRef();
-                    cashedDataRef.FileName = file.Name;
+                    cashedDataRef.FileName = fileName;
                     cashedDataRef.Ticks = ticks;
                     cashedDataRef.SendedItems = LoadSendedItemsIndex(fileName);
                     _CashedData.Add(cashedDataRef);
@@ -92,7 +92,7 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
                 while(stream.Position < stream.Length)
                 {
                     TrackMessage trackMessage = _TrackMessageSerializator.DeserializeObject<TrackMessage>(stream);
-                    if(!cashedDataRef.SendedItems.Contains(index))
+                    if(!cashedDataRef.SendedItems.Contains(index++))
                     {
                         lock(Messages)
                             Messages.Insert(cashedDataRef.LoadedItemsCount++, trackMessage);
@@ -152,6 +152,7 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
             DateTime time = DateTime.Now;
             if (_DataStream == null)
             {
+                _StartTime = DateTime.Now;
                 //                _FileName = String.Format("{0} {1}", time.ToShortDateString ().Replace('.', '_'), time.ToShortTimeString().Replace(':', '_'));
                 _CurrentFile = new CashedDataRef();
                 _CurrentFile.Ticks = time.Subtract(RefDate).Ticks;
@@ -168,11 +169,11 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
             }
             _CurrentFile.LoadedItemsCount++;
 
-            trackMessage.Index = _Index;
+            trackMessage.Index = _Index++;
             trackMessage.FileName = _CurrentFile.FileName;
             _TrackMessageSerializator.SerializeObject(_DataStream, trackMessage);
             _DataStream.Flush();
-            if (time.Subtract(_StartTime).TotalSeconds > 1000 || _Index == 1000)
+            if (time.Subtract(_StartTime).TotalSeconds > 10 || _Index == 1000)
             {
                 _DataStream.Close();
                 _DataStream.Dispose();
@@ -187,10 +188,12 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
 
         public virtual void RegisterSending(TrackMessage trackMessage)//string fileName, short index
         {
-            if(trackMessage.FileName == _FileName)
+            if(trackMessage.FileName == _FileName && _IndexSteam != null)
             {
                 _IndexSteam.WriteByte((byte)((trackMessage.Index & 0xFF00) >> 8));
                 _IndexSteam.WriteByte((byte)(trackMessage.Index & 0xFF));
+                _IndexSteam.Flush();
+                _CurrentFile.SendedItems.Add(trackMessage.Index);
             }
             else
             {

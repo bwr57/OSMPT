@@ -22,7 +22,7 @@ namespace RodSoft.OSMPT.PT.Online
         public string AreaName;
         public string StreetName;
         public DateTime Time;
-        public double? Bearing;
+        public double Course;
         public byte Red;
         public byte Green;
         public byte Blue;

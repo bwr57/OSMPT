@@ -2024,14 +2024,15 @@ namespace Demo.WindowsPresentation
             if(_TruckStatusCashService == null)
             {
                 _TruckStatusCashService = new CashService() { CashFolder = "Cash" };
+                _TruckStatusCashService.LoadCashedData();
             }
             if(_TrackMessageSender == null)
             {
-                _TrackMessageSender = new TrackMessageSender("http://track.t1604.ru/api/track.php");
+                _TrackMessageSender = new TrackMessageSender("http://localhost:54831/Default.aspx");
                 _TrackMessageSender.Timeout = 3000;
                 _TrackMessageSender.CashService = _TruckStatusCashService;
             }
-            TrackMessage trackMessage = new TrackMessage() { Time = DateTime.Now, Vehicle = "С513РК95RUS", TrackPoint = trackPoint };
+            TrackMessage trackMessage = new TrackMessage() { Time = DateTime.Now, Vehicle = "С513РК95RUS", TrackPoint =  new GPSDataMessage(trackPoint) };
             _TrackMessageSender.SendMessage(trackMessage);
 //            MainMap.ZoomAndCenterMarkers(null);
         }

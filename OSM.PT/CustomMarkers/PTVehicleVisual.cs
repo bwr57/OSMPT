@@ -21,7 +21,7 @@ namespace RodSoft.OSM.PT.Online.Controls
             {
                 _VehicleData = value;
                 Text = value.Line;
-                Angle = value.Bearing;
+                Angle = value.Course;
 
                 if (Popup != null)
                 {

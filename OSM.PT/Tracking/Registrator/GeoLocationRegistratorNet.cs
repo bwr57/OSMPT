@@ -37,7 +37,7 @@ namespace Demo.WindowsPresentation.Tracking.Registrator
         {
             GeoPosition<GeoCoordinate> position = _RegistratorService.Position;
             TrackPoint trackPoint = new TrackPoint(position.Location.Latitude, position.Location.Longitude)
-            { Bearing = position.Location.Course, Speed = position.Location.Speed, Elevation = position.Location.Altitude, Time = position.Timestamp.DateTime };
+            { Course = position.Location.Course, Speed = position.Location.Speed, Altitude = position.Location.Altitude, Time = position.Timestamp.DateTime };
             trackPoint.Time = position.Timestamp.DateTime;
             return trackPoint;
         }

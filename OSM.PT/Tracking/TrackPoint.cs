@@ -25,6 +25,12 @@ namespace RodSoft.OSM.Tracking
 
         public Meter Elevation
         {
+            get { return Altitude; }
+            set { Altitude = value.Value; }
+        }
+
+        public double Altitude
+        {
             get; set;
         }
 

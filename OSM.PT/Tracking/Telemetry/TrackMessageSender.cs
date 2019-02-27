@@ -56,7 +56,7 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
                         NameValueCollection values = trackMessageSerializator.PrepareCollection(trackMessage, null);
                         try
                         {
-                            byte[] response = _Client.UploadValues("http://localhost:54831/Default.aspx", "POST", values); 
+                                byte[] response = _Client.UploadValues("http://localhost:54831/Default.aspx", "POST", values); 
                             string resp = Encoding.Default.GetString(response);
                         }
                         catch

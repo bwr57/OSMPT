@@ -181,6 +181,7 @@
     <Compile Include="CustomMarkers\PTVehicleVisual.cs" />
     <Compile Include="OSMObjects\ЩыьВфефЫщгксу.cs" />
     <Compile Include="Source\LoadRoadsJosm.cs" />
+    <Compile Include="Tracking\Registrator\GPSDataMessage.cs" />
     <Compile Include="Tracking\Telemetry\CashService.cs" />
     <Compile Include="Tracking\Controls\SelectStartPointDelegate.cs" />
     <Compile Include="Tracking\Controls\TrackPartInfoUserControl.xaml.cs">
@@ -206,6 +207,7 @@
     <Compile Include="Tracking\Registrator\GeoLocationRegistrator.cs" />
     <Compile Include="Tracking\Registrator\GeoLocationRegistratorNet.cs" />
     <Compile Include="Tracking\Registrator\IGeoPositionRegistrtor.cs" />
+    <Compile Include="Tracking\Telemetry\MessageBase.cs" />
     <Compile Include="Tracking\Telemetry\ServiceClient.cs">
       <SubType>Component</SubType>
     </Compile>

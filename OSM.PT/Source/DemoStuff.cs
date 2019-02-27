@@ -410,7 +410,7 @@ namespace Demo.WindowsForms
                 XmlNode asimutNode = node.SelectSingleNode("azimuth");
                 int asimut = 0;
                 if (asimutNode != null && Int32.TryParse(asimutNode.InnerText, out asimut))
-                    d.Bearing = asimut / 100;
+                    d.Course = asimut / 100;
 
                 XmlNode numberNode = node.SelectSingleNode("vehicle");
                 if (numberNode != null)
@@ -445,7 +445,7 @@ namespace Demo.WindowsForms
                      d.Line = sit[3];
                      if(!string.IsNullOrEmpty(sit[4]))
                      {
-                        d.Bearing = double.Parse(sit[4], CultureInfo.InvariantCulture);
+                        d.Course = double.Parse(sit[4], CultureInfo.InvariantCulture);
                      }
 
                      if(!string.IsNullOrEmpty(sit[5]))

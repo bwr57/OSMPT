@@ -25,9 +25,9 @@ namespace RodSoft.OSMPT.PT.Online
             vd.Id = BOARD_ID;
             vd.Number = this.BOARD_NUM.ToString();
             vd.Speed = this.Velocity;
-            vd.Bearing = this.Course + 90;
-            if (vd.Bearing > 360)
-                vd.Bearing = vd.Bearing - 360;
+            vd.Course = this.Course + 90;
+            if (vd.Course > 360)
+                vd.Course = vd.Course - 360;
             vd.Line = this.Route;
             vd.Operator = "ЕТТУ";
             return vd;
