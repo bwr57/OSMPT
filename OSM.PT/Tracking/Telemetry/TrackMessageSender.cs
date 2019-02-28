@@ -27,8 +27,29 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
         }
 
         public CashService CashService { get; set; } = new CashService();
+        public int TransmittingPeriod { get; internal set; } = 1000;
+        public string ServerAddress { get; internal set; }
 
-        public TrackMessageSender(string address)
+        public TrackMessageSender(string serverAddress)
+        {
+            this.ServerAddress = serverAddress;
+            Start();
+        }
+
+        public TrackMessageSender(TelemetrySettings telemetrySettings)
+        {
+            if (telemetrySettings != null)
+            {
+                if (telemetrySettings.RequestTimeout > 0)
+                    this.Timeout = telemetrySettings.RequestTimeout;
+                if (telemetrySettings.TransmittingPeriod > 0)
+                    this.TransmittingPeriod = telemetrySettings.TransmittingPeriod;
+                this.ServerAddress = telemetrySettings.ServerAddress;
+            }
+            Start();
+        }
+
+        protected virtual void Start()
         {
             _Thread = new Thread(new ThreadStart(ProcessTransmitting));
             _Thread.Start();
@@ -39,42 +60,51 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
             TrackMessageSerializator trackMessageSerializator = new TrackMessageSerializator();
             while(_IsEnabled)
             {
-                int initialCount = 0;
-                while (CashService.Messages.Count > 0)
+                if (!String.IsNullOrEmpty(ServerAddress))
                 {
-                    TrackMessage trackMessage;
-                    lock (CashService.Messages)
-                        if (initialCount == CashService.Messages.Count)
-                            trackMessage = CashService.Messages[0];
-                        else
-                        {
-                            initialCount = CashService.Messages.Count;
-                            trackMessage = CashService.Messages[CashService.Messages.Count - 1];
-                        }
-                    if(!trackMessage.WasTransmitted)
+                    int initialCount = 0;
+                    while (CashService.Messages.Count > 0)
                     {
-                        NameValueCollection values = trackMessageSerializator.PrepareCollection(trackMessage, null);
-                        try
+                        TrackMessage trackMessage;
+                        lock (CashService.Messages)
+                            if (initialCount == CashService.Messages.Count)
+                                trackMessage = CashService.Messages[0];
+                            else
+                            {
+                                initialCount = CashService.Messages.Count;
+                                trackMessage = CashService.Messages[CashService.Messages.Count - 1];
+                            }
+                        if (!trackMessage.WasTransmitted)
                         {
-                                byte[] response = _Client.UploadValues("http://localhost:54831/Default.aspx", "POST", values); 
-                            string resp = Encoding.Default.GetString(response);
+                            NameValueCollection values = trackMessageSerializator.PrepareCollection(trackMessage, null);
+                            bool isTransmitted = false;
+                            try
+                            {
+                                byte[] response = _Client.UploadValues(ServerAddress, "POST", values);
+                                //byte[] response = _Client.UploadValues("http://track.t1604.ru/api/track.php", "POST", values);
+                                string resp = Encoding.Default.GetString(response);
+                                isTransmitted = resp.StartsWith("200 ") || resp == "200";
+                            }
+                            catch(Exception ex)
+                            {
+                                IsActive = false;
+                                break;
+                            }
+                            IsActive = true;
+                            if (isTransmitted)
+                            {
+                                CashService.RegisterSending(trackMessage);
+                                initialCount--;
+                            }
                         }
-                        catch
+                        if (!_IsEnabled)
                         {
-                            IsActive = false;
                             break;
                         }
-                        IsActive = true;
-                        CashService.RegisterSending(trackMessage);
-                        initialCount--;
-                    }
-                    if (!_IsEnabled)
-                    {
-                        break;
-                    }
 
+                    }
                 }
-                Thread.Sleep(500);
+                Thread.Sleep(TransmittingPeriod);
             }
             _Client.Dispose();
         }

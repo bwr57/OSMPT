@@ -39,6 +39,7 @@ using OsmSharp.Routing.Osm.Data.Processing;
 using OsmSharp.Routing.Osm.Interpreter;
 using OsmSharp.Routing.Route;
 using OsmSharp.Tools.Math.Geo;
+using Rodsoft.RegistryOperations;
 using RodSoft.OSM.PT.Online.Controls;
 using RodSoft.OSM.Source;
 using RodSoft.OSM.Tracking;
@@ -2021,19 +2022,32 @@ namespace Demo.WindowsPresentation
                 _CurrentPositionMarker.Background = _CurrentPositionMarkerBrushActive;
                 _CurrentPositionMarker.UpdateVisual(true);
             }
-            if(_TruckStatusCashService == null)
+            if (_TrackMessageSender == null)
             {
-                _TruckStatusCashService = new CashService() { CashFolder = "Cash" };
-                _TruckStatusCashService.LoadCashedData();
-            }
-            if(_TrackMessageSender == null)
-            {
-                _TrackMessageSender = new TrackMessageSender("http://localhost:54831/Default.aspx");
-                _TrackMessageSender.Timeout = 3000;
+                TelemetrySettings telemetrySettings = new TelemetrySettings();
+                RegistryOperation registryOperation = new RegistryOperation("Rodsoft\\OSM.PT\\Telemetry");
+                registryOperation.LoadSettingsAuto(telemetrySettings);
+                //telemetrySettings.ServerAddress = "http://localhost:54831/Default.aspx";
+                //telemetrySettings.TransmittingPeriod = 1000;
+                //telemetrySettings.ServiceType = 0;
+                //telemetrySettings.RequestTimeout = 3000;
+                //telemetrySettings.CashFolder = "Cash";
+                //telemetrySettings.MaximumItemsPerCashFile = 100;
+                //telemetrySettings.MaximumSecondsPerCashFile = 100;
+                //registryOperation.SaveSettingsAuto(telemetrySettings);
+                if (_TruckStatusCashService == null)
+                {
+                    _TruckStatusCashService = new CashService(telemetrySettings);
+                    _TruckStatusCashService.LoadCashedData();
+                }
+                _TrackMessageSender = new TrackMessageSender(telemetrySettings);
                 _TrackMessageSender.CashService = _TruckStatusCashService;
             }
-            TrackMessage trackMessage = new TrackMessage() { Time = DateTime.Now, Vehicle = "С513РК95RUS", TrackPoint =  new GPSDataMessage(trackPoint) };
-            _TrackMessageSender.SendMessage(trackMessage);
+            if (!String.IsNullOrEmpty(_TrackMessageSender.ServerAddress))
+            { 
+                TrackMessage trackMessage = new TrackMessage() { Time = DateTime.Now, Vehicle = "С513РК95RUS", TrackPoint = new GPSDataMessage(trackPoint) };
+                _TrackMessageSender.SendMessage(trackMessage);
+            }
 //            MainMap.ZoomAndCenterMarkers(null);
         }
 

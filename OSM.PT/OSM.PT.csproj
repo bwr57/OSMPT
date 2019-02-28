@@ -164,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cash\CashHelper.cs" />
+    <Compile Include="Configuration\RegistryOperation.cs" />
     <Compile Include="Controls\BusDescription.xaml.cs">
       <DependentUpon>BusDescription.xaml</DependentUpon>
     </Compile>
@@ -211,11 +212,13 @@
     <Compile Include="Tracking\Telemetry\ServiceClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Tracking\Telemetry\TelemetrySettings.cs" />
     <Compile Include="Tracking\Telemetry\TrackMessageSender.cs" />
     <Compile Include="Tracking\Telemetry\Serialization\GPSMessageSerializator.cs" />
     <Compile Include="Tracking\Telemetry\TrackMessage.cs" />
     <Compile Include="Tracking\Telemetry\Serialization\TrackMessageSerializator.cs" />
     <Compile Include="Tracking\Track.cs" />
+    <Compile Include="Tracking\TrackingSettings.cs" />
     <Compile Include="Tracking\TrackPoint.cs" />
     <Compile Include="Tracking\Controls\TrackPointMarker.cs" />
     <Compile Include="Windows\Message.xaml.cs">

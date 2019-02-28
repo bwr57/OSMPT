@@ -41,6 +41,29 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
 
         protected CashedDataRef _CurrentFile;
 
+        public int MaximumItemsPerCashFile { get; set; } = 1000;
+
+        public int MaximumSecondsPerCashFile { get; set; } = 1000;
+
+        public CashService()
+        {
+
+        }
+
+        public CashService(TelemetrySettings telemetrySettings)
+        {
+            if (telemetrySettings != null)
+            {
+                CashFolder = telemetrySettings.CashFolder == null ? "" : "Cash";
+                if (telemetrySettings.MaximumItemsPerCashFile > 0)
+                    MaximumItemsPerCashFile = telemetrySettings.MaximumItemsPerCashFile;
+                if (telemetrySettings.MaximumSecondsPerCashFile > 0)
+                {
+                    MaximumSecondsPerCashFile = telemetrySettings.MaximumSecondsPerCashFile;
+                }
+            }
+        }
+
         protected virtual IList<int> LoadSendedItemsIndex(string fileName)
         {
             IList<int> sendedItemsIndexes = new List<int>();
@@ -173,7 +196,7 @@ namespace Demo.WindowsPresentation.Tracking.Telemetry
             trackMessage.FileName = _CurrentFile.FileName;
             _TrackMessageSerializator.SerializeObject(_DataStream, trackMessage);
             _DataStream.Flush();
-            if (time.Subtract(_StartTime).TotalSeconds > 10 || _Index == 1000)
+            if (time.Subtract(_StartTime).TotalSeconds > MaximumSecondsPerCashFile || _Index >= MaximumItemsPerCashFile)
             {
                 _DataStream.Close();
                 _DataStream.Dispose();
