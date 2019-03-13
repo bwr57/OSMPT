@@ -164,7 +164,7 @@ namespace Demo.WindowsForms
         TramStop = 16,
         RailroadStation = 32,
         RailroadHalt = 64,
-		    SubwayStation = 128
+	    SubwayStation = 128
     }
 
     public class Tools

@@ -73,6 +73,10 @@ namespace OsmSharp.Tools.Math
             {
                 return _values[idx];
             }
+            set
+            {
+                _values[idx] = value;
+            }
         }
 
         /// <summary>

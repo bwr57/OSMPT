@@ -65,10 +65,10 @@ namespace OsmSharp.Tools.Math.Geo
             {
                 return this[0];
             }
-            //set
-            //{
-            //    this[0] = value;
-            //}
+            set
+            {
+                this[0] = value;
+            }
         }
 
         /// <summary>
@@ -80,10 +80,10 @@ namespace OsmSharp.Tools.Math.Geo
             {
                 return this[1];
             }
-            //set
-            //{
-            //    this[1] = value;
-            //}
+            set
+            {
+                this[1] = value;
+            }
         }
 
         #endregion
