@@ -60,7 +60,6 @@
   <ItemGroup>
     <Compile Include="OSMObjects\OSMWay.cs" />
     <Compile Include="PT\Cash\CashHelper.cs" />
-    <Compile Include="Configuration\RegistryOperation.cs" />
     <Compile Include="OSMObjects\OSMArea.cs" />
     <Compile Include="OSMObjects\OSMDriverBase.cs" />
     <Compile Include="OSMObjects\OSMObjectBase.cs" />
@@ -75,7 +74,6 @@
     <Compile Include="PT\OSMPTRouteStop.cs" />
     <Compile Include="PT\OSMPTStopPoint.cs" />
     <Compile Include="PT\StopTypes.cs" />
-    <Compile Include="Tools\CompareBit.cs" />
     <Compile Include="Tracking\Controls\SelectStartPointDelegate.cs" />
     <Compile Include="Tracking\Controls\TrackPartInfoUserControl.xaml.cs">
       <DependentUpon>TrackPartInfoUserControl.xaml</DependentUpon>
@@ -86,6 +84,7 @@
       <DependentUpon>TrackTooltip.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tracking\ExtendedVehicleData.cs" />
+    <Compile Include="Tracking\Registrator\GeoLocationLogger.cs" />
     <Compile Include="Tracking\GpxDriver.cs" />
     <Compile Include="Tracking\IVehicleGeoDataAgentFactory.cs" />
     <Compile Include="Tracking\Registrator\GeoLocationRegistrator.cs" />
@@ -94,18 +93,15 @@
     <Compile Include="Tracking\Registrator\IGeoPositionRegistrtor.cs" />
     <Compile Include="Tracking\Telemetry\CashService.cs" />
     <Compile Include="Tracking\IVehicleGeoData.cs" />
-    <Compile Include="Communication\MessageBase.cs" />
     <Compile Include="Tracking\Telemetry\Serialization\GPSMessageSerializator.cs" />
     <Compile Include="Tracking\Telemetry\Serialization\TrackMessageSerializator.cs" />
-    <Compile Include="Communication\Http\ServiceClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Tracking\Telemetry\TelemetrySettings.cs" />
     <Compile Include="Tracking\Telemetry\TrackMessage.cs" />
     <Compile Include="Tracking\Telemetry\TrackMessageSender.cs" />
     <Compile Include="Tracking\Track.cs" />
     <Compile Include="Tracking\TrackingSettings.cs" />
     <Compile Include="Tracking\TrackPoint.cs" />
+    <Compile Include="Tracking\TrackPointFactory.cs" />
     <Compile Include="Tracking\VehicleGeoData.cs" />
     <Compile Include="UI\Controls\TooltipBase.cs" />
     <Compile Include="UI\Controls\Markers\Circle.xaml.cs">
@@ -138,6 +134,10 @@
     <ProjectReference Include="..\OsmSharp.Tools\OsmSharp.Tools.csproj">
       <Project>{95c32f29-5537-4fb7-8c85-b754bc9903a9}</Project>
       <Name>OsmSharp.Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RodSoft.Core\RodSoft.Core.csproj">
+      <Project>{9eaf09df-17f5-41ae-a96c-d5f24b22d0a9}</Project>
+      <Name>RodSoft.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

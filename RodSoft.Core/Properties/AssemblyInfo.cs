@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("RodSoft.OSM")]
-[assembly: AssemblyDescription("Библиотека классов для работы с картографическими данными OSM и регистрации треков")]
+[assembly: AssemblyTitle("RodSoft.Core")]
+[assembly: AssemblyDescription("Набор базовых классов для построения приложений")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Rodsoft")]
-[assembly: AssemblyProduct("RodSoft.OSM")]
+[assembly: AssemblyCompany("RodSoft")]
+[assembly: AssemblyProduct("RodSoft.Core")]
 [assembly: AssemblyCopyright("Copyright © Родион Щербаков, 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("5d24a7bf-a8f7-4116-baf1-ebbe7d0803fe")]
+[assembly: Guid("9eaf09df-17f5-41ae-a96c-d5f24b22d0a9")]
 
 // Сведения о версии сборки состоят из следующих четырех значений:
 //
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Можно задать все значения или принять номер сборки и номер редакции по умолчанию.
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.2")]
-[assembly: AssemblyFileVersion("1.0.0.2")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

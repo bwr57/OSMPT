@@ -8,7 +8,7 @@ namespace RodSoft.OSM.Tracking.Registrator
 
         protected GeoCoordinateWatcher _RegistratorService;
 
-        public IVehicleGeoDataAgentFactory VehicleGeoDataAgentFactory;
+        public IVehicleGeoDataAgentFactory VehicleGeoDataAgentFactory { get; set; }
 
         public uint Interval
         {

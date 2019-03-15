@@ -1,4 +1,4 @@
-﻿namespace RodSoft.Tools
+﻿namespace RodSoft.Core.Tools
 {
     public class CompareBit
     {

@@ -2,6 +2,6 @@
 {
     public interface IVehicleGeoDataAgentFactory
     {
-        VehicleGeoData CreateVehicleGeoDataAgent(double Latitude, double Longitude);
+        VehicleGeoData CreateVehicleGeoDataAgent(double latitude, double longitude);
     }
 }

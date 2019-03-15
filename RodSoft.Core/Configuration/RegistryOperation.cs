@@ -2,7 +2,7 @@
 using System;
 using System.Reflection;
 
-namespace Rodsoft.RegistryOperations
+namespace Rodsoft.Core.RegistryOperations
 {
     /// <summary>
     /// Базовый класс для сохранения и чтения настроек в реестре

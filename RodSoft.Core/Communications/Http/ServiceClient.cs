@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace RodSoft.Communications.Http
+namespace RodSoft.Core.Communications.Http
 {
     public class ServiceClient : WebClient
     {

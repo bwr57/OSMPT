@@ -1,4 +1,4 @@
-﻿using RodSoft.Communications;
+﻿using RodSoft.Core.Communications;
 using System;
 
 namespace RodSoft.OSM.Tracking

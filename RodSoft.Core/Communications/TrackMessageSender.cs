@@ -1,16 +1,13 @@
-﻿using RodSoft.Core.Communications;
-using RodSoft.Core.Communications.Http;
-using RodSoft.OSM.Tracking.Telemetry.Serialization;
+﻿using RodSoft.Core.Communications.Http;
 using System;
 using System.Collections.Specialized;
 using System.Text;
 using System.Threading;
 
-namespace RodSoft.OSM.Tracking.Telemetry
+namespace RodSoft.Core.Communications
 {
-    public class TrackMessageSender : IActivated, IDisposable
+    public abstract class TrackMessageSender<T> : IActivated, IDisposable where T : CashedMessage
     {
-        private readonly ServiceClient _Client = new ServiceClient();
 
         private Thread _Thread;
 
@@ -19,31 +16,22 @@ namespace RodSoft.OSM.Tracking.Telemetry
         public bool IsActive { get; set; }
 
 
-        public int Timeout
-        {
-            get { return _Client.Timeout; }
-            set { _Client.Timeout = value; }
-        }
 
-        public CashService CashService { get; set; } = new CashService();
+        public CashService<T> CashService { get; set; } = new CashService<T>();
         public int TransmittingPeriod { get; internal set; } = 1000;
-        public string ServerAddress { get; internal set; }
 
-        public TrackMessageSender(string serverAddress)
+        public TrackMessageSender()
+            : base()
         {
-            this.ServerAddress = serverAddress;
             Start();
         }
 
-        public TrackMessageSender(TelemetrySettings telemetrySettings)
+        public TrackMessageSender(CommunicationSettings telemetrySettings)
         {
             if (telemetrySettings != null)
             {
-                if (telemetrySettings.RequestTimeout > 0)
-                    this.Timeout = telemetrySettings.RequestTimeout;
                 if (telemetrySettings.TransmittingPeriod > 0)
                     this.TransmittingPeriod = telemetrySettings.TransmittingPeriod;
-                this.ServerAddress = telemetrySettings.ServerAddress;
             }
             Start();
         }
@@ -54,17 +42,22 @@ namespace RodSoft.OSM.Tracking.Telemetry
             _Thread.Start();
         }
 
+        protected abstract bool TrasmitMessage(T message);
+
+        protected abstract bool IsReady();
+
+        protected abstract void DisposeClient();
+
         protected virtual void ProcessTransmitting()
         {
-            TrackMessageSerializator trackMessageSerializator = new TrackMessageSerializator();
             while(_IsEnabled)
             {
-                if (!String.IsNullOrEmpty(ServerAddress))
+                if (IsReady())
                 {
                     int initialCount = 0;
                     while (CashService.Messages.Count > 0)
                     {
-                        TrackMessage trackMessage;
+                        T trackMessage;
                         lock (CashService.Messages)
                             if (initialCount == CashService.Messages.Count)
                                 trackMessage = CashService.Messages[0];
@@ -75,20 +68,13 @@ namespace RodSoft.OSM.Tracking.Telemetry
                             }
                         if (!trackMessage.WasTransmitted)
                         {
-                            NameValueCollection values = trackMessageSerializator.PrepareCollection(trackMessage, null);
-                            bool isTransmitted = false;
-                            try
-                            {
-                                byte[] response = _Client.UploadValues(ServerAddress, "POST", values);
-                                //byte[] response = _Client.UploadValues("http://track.t1604.ru/api/track.php", "POST", values);
-                                string resp = Encoding.Default.GetString(response);
-                                isTransmitted = resp.StartsWith("200 ") || resp == "200";
-                            }
-                            catch(Exception ex)
+                            bool isTransmitted = TrasmitMessage(trackMessage);
+                            if(!isTransmitted)
                             {
                                 IsActive = false;
                                 break;
                             }
+
                             IsActive = true;
                             if (isTransmitted)
                             {
@@ -105,10 +91,10 @@ namespace RodSoft.OSM.Tracking.Telemetry
                 }
                 Thread.Sleep(TransmittingPeriod);
             }
-            _Client.Dispose();
+            DisposeClient();
         }
 
-        public void SendMessage(TrackMessage trackMessage)
+        public void SendMessage(T trackMessage)
         {
             trackMessage.WasTransmitted = false;
             this.CashService.SaveMessage(trackMessage);

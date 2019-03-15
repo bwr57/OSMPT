@@ -16,6 +16,6 @@ namespace RodSoft.OSM.Tracking.Registrator
         VehicleGeoData GetCurrentPosition();
         GeoPositionRegistratorStatus GetRegistratorStatus();
         uint Interval { get; set; }
-
+        IVehicleGeoDataAgentFactory VehicleGeoDataAgentFactory { get; set; }
     }
 }
