@@ -1,4 +1,5 @@
-﻿using RodSoft.OSM.Tracking.Telemetry.Serialization;
+﻿using RodSoft.Core.Communications;
+using RodSoft.OSM.Tracking.Telemetry.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +7,22 @@ using System.Linq;
 
 namespace RodSoft.OSM.Tracking.Telemetry
 {
-    public class CashService
+    public class GPSMessagesCashService : CashService<TrackMessage>
+    {
+        public GPSMessagesCashService()
+            : base()
+        {
+
+        }
+
+        public GPSMessagesCashService(CommunicationSettings telemetrySettings)
+            : base(telemetrySettings)
+        {
+        }
+
+    }
+    /*
+    public class CashService 
     {
         public class CashedDataRef
         {
@@ -241,5 +257,6 @@ namespace RodSoft.OSM.Tracking.Telemetry
             }
         }
     } 
+    */
 }
  

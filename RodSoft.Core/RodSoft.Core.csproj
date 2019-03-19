@@ -42,14 +42,14 @@
   <ItemGroup>
     <Compile Include="Communications\CashedMessage.cs" />
     <Compile Include="Communications\CashService.cs" />
-    <Compile Include="Communications\Http\PostServiceMessageSender.cs" />
+    <Compile Include="Communications\Http\PostRemoteDiagnosticClient.cs" />
     <Compile Include="Communications\Http\ServiceClient.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Communications\IActivated.cs" />
     <Compile Include="Communications\MessageBase.cs" />
     <Compile Include="Communications\CommunicationSettings.cs" />
-    <Compile Include="Communications\TrackMessageSender.cs" />
+    <Compile Include="Communications\RemoteDiagnosticClient.cs" />
     <Compile Include="Communications\MessageSerializatorBase.cs" />
     <Compile Include="Configuration\RegistryOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

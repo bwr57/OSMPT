@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RodSoft.Core.Communications.Http
 {
-    class PostServiceMessageSender<T> : TrackMessageSender<T> where T : CashedMessage
+    public class PostRemoteDiagnosticClient<T> : RemoteDiagnosticClient<T> where T : CashedMessage
     {
         private ServiceClient _Client = new ServiceClient();
 
@@ -18,14 +18,14 @@ namespace RodSoft.Core.Communications.Http
             set { _Client.Timeout = value; }
         }
 
-        public PostServiceMessageSender(string serverAddress)
+        public PostRemoteDiagnosticClient(string serverAddress)
             : base()
         {
             this.ServerAddress = serverAddress;
             Start();
         }
 
-        public PostServiceMessageSender(CommunicationSettings telemetrySettings)
+        public PostRemoteDiagnosticClient(CommunicationSettings telemetrySettings)
             : base(telemetrySettings)
         {
             if (telemetrySettings != null)

@@ -19,7 +19,7 @@ namespace RodSoft.Core.Communications
 
         public DateTime RefDate { get; } = new DateTime(2019, 1, 1);
 
-//        protected TrackMessageSerializator _TrackMessageSerializator = new TrackMessageSerializator();
+        protected MessageSerializatorBase<T> _TrackMessageSerializator = new MessageSerializatorBase<T>();
 
         public string CashFolder { get; set; }
 
@@ -43,7 +43,7 @@ namespace RodSoft.Core.Communications
 
         public int MaximumSecondsPerCashFile { get; set; } = 1000;
 
-        protected BinaryFormatter _BinaryFormatter = new BinaryFormatter();
+//        protected BinaryFormatter _BinaryFormatter = new BinaryFormatter();
 
         public CashService()
         {
@@ -85,6 +85,8 @@ namespace RodSoft.Core.Communications
 
         protected virtual void LoadCashFilesList()
         {
+            if (!Directory.Exists(CashFolder))
+                Directory.CreateDirectory(CashFolder);
             DirectoryInfo d = new DirectoryInfo(CashFolder);//Assuming Test is your Folder
             FileInfo[] Files = d.GetFiles("*.dat"); //Getting Text files
             foreach (FileInfo file in Files)
@@ -114,7 +116,7 @@ namespace RodSoft.Core.Communications
                 int index = 0;
                 while(stream.Position < stream.Length)
                 {
-                    T trackMessage = (T)_BinaryFormatter.Deserialize(stream);
+                    T trackMessage = _TrackMessageSerializator.DeserializeObject(stream);
                     if(!cashedDataRef.SendedItems.Contains(index++))
                     {
                         lock(Messages)
@@ -194,7 +196,7 @@ namespace RodSoft.Core.Communications
 
             trackMessage.Index = _Index++;
             trackMessage.FileName = _CurrentFile.FileName;
-            _BinaryFormatter.Serialize(_DataStream, trackMessage);
+            _TrackMessageSerializator.SerializeObject(_DataStream, trackMessage);
             _DataStream.Flush();
             if (time.Subtract(_StartTime).TotalSeconds > MaximumSecondsPerCashFile || _Index >= MaximumItemsPerCashFile)
             {

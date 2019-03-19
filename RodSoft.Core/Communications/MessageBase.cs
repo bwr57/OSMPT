@@ -3,8 +3,12 @@ using System.Reflection;
 
 namespace RodSoft.Core.Communications
 {
-    public class AssignableAttribute : Attribute
-    { }
+    public class TransmittedAttribute : Attribute
+    {
+        public int SectionIndex { get; set; }
+        public int PropertyIndex { get; set; }
+        public string FormatString { get; set; }
+    }
 
     [Serializable]
     public class MessageBase
@@ -23,14 +27,14 @@ namespace RodSoft.Core.Communications
         {
             foreach (FieldInfo field in source.GetType().GetFields())
             {
-                if (isAnyMember || field.GetCustomAttribute(typeof(AssignableAttribute), true) != null)
+                if (isAnyMember || field.GetCustomAttribute(typeof(TransmittedAttribute), true) != null)
                 {
                     AssignMemberValue(target, field.Name, field.GetValue(source), isAnyMember);
                 }
             }
             foreach (PropertyInfo property in source.GetType().GetProperties())
             {
-                if (isAnyMember || property.GetCustomAttribute(typeof(AssignableAttribute), true) != null)
+                if (isAnyMember || property.GetCustomAttribute(typeof(TransmittedAttribute), true) != null)
                 {
                     AssignMemberValue(target, property.Name, property.GetValue(source), isAnyMember);
                 }
@@ -47,7 +51,7 @@ namespace RodSoft.Core.Communications
             FieldInfo targetField = target.GetType().GetField(memberName);
             if (targetField != null)
             {
-                if (isAnyMember || targetField.GetCustomAttribute(typeof(AssignableAttribute), true) != null)
+                if (isAnyMember || targetField.GetCustomAttribute(typeof(TransmittedAttribute), true) != null)
                 {
                     targetField.SetValue(target, value);
                 }
@@ -55,7 +59,7 @@ namespace RodSoft.Core.Communications
             else
             {
                 PropertyInfo targetProperty = target.GetType().GetProperty(memberName);
-                if (targetProperty != null && (isAnyMember || targetProperty.GetCustomAttribute(typeof(AssignableAttribute), true) != null))
+                if (targetProperty != null && (isAnyMember || targetProperty.GetCustomAttribute(typeof(TransmittedAttribute), true) != null))
                 {
                     targetProperty.SetValue(target, value);
                 }

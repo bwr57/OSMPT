@@ -8,5 +8,14 @@ namespace RodSoft.Core.Communications
         public bool WasTransmitted;
         public int Index;
         public string FileName;
+
+        public CashedMessage()
+        {        }
+
+        public CashedMessage(object source)
+        {
+            Assign(source);
+        }
+
     }
 }

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using RodSoft.Core.Communications;
+using System;
 
 namespace RodSoft.OSM.Tracking.Telemetry
 {
     [Serializable]
-    public class TrackMessage 
+    public class TrackMessage : CashedMessage
     {
         public DateTime Time;
         public string Vehicle;

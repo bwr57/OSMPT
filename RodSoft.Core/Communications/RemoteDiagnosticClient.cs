@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace RodSoft.Core.Communications
 {
-    public abstract class TrackMessageSender<T> : IActivated, IDisposable where T : CashedMessage
+    public abstract class RemoteDiagnosticClient<T> : IActivated, IDisposable where T : CashedMessage
     {
 
         private Thread _Thread;
@@ -20,13 +20,13 @@ namespace RodSoft.Core.Communications
         public CashService<T> CashService { get; set; } = new CashService<T>();
         public int TransmittingPeriod { get; internal set; } = 1000;
 
-        public TrackMessageSender()
+        public RemoteDiagnosticClient()
             : base()
         {
             Start();
         }
 
-        public TrackMessageSender(CommunicationSettings telemetrySettings)
+        public RemoteDiagnosticClient(CommunicationSettings telemetrySettings)
         {
             if (telemetrySettings != null)
             {

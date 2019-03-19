@@ -1,10 +1,11 @@
-﻿using System.Collections.Specialized;
+﻿using RodSoft.Core.Communications;
+using System.Collections.Specialized;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace RodSoft.OSM.Tracking.Telemetry.Serialization
 {
-    public class TrackMessageSerializator
+    public class TrackMessageSerializator : MessageSerializatorBase<TrackMessage>
     {
         protected GPSMessageSerializator gpsMessageSerializator = new GPSMessageSerializator();
 

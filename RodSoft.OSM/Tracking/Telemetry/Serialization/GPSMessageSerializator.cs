@@ -1,9 +1,10 @@
-﻿using System.Collections.Specialized;
+﻿using RodSoft.Core.Communications;
+using System.Collections.Specialized;
 using System.Globalization;
 
 namespace RodSoft.OSM.Tracking.Telemetry.Serialization
 {
-    public class GPSMessageSerializator
+    public class GPSMessageSerializator : MessageSerializatorBase<GPSDataMessage>
     {
         public virtual NameValueCollection PrepareCollection(GPSDataMessage message, NameValueCollection nameValueCollection)
         {
