@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.IO;
+using System.Net;
 using System.Text;
 
 namespace RodSoft.Core.Communications.Http
@@ -10,7 +12,6 @@ namespace RodSoft.Core.Communications.Http
 
         public string ServerAddress { get; internal set; }
 
-        MessageSerializatorBase<T> _MessageSerializator = new MessageSerializatorBase<T>();
 
         public int Timeout
         {
@@ -22,30 +23,56 @@ namespace RodSoft.Core.Communications.Http
             : base()
         {
             this.ServerAddress = serverAddress;
-            Start();
         }
 
         public PostRemoteDiagnosticClient(CommunicationSettings telemetrySettings)
             : base(telemetrySettings)
         {
-            if (telemetrySettings != null)
+          if (telemetrySettings != null)
             {
                 this.ServerAddress = telemetrySettings.ServerAddress;
                 if (telemetrySettings.RequestTimeout > 0)
                     this.Timeout = telemetrySettings.RequestTimeout;
             }
-            Start();
-        }
+         }
 
         protected override bool TrasmitMessage(T message)
         {
-            NameValueCollection values = _MessageSerializator.PrepareCollection(message, null);
+            if (_Client == null)
+                return false;
+            NameValueCollection values = MessageSerializator.PrepareCollection(message, null);
+            string requestTest = MessageSerializator.PrepareRequest(message, null);
             bool isTransmitted = false;
             try
             {
-                byte[] response = _Client.UploadValues(ServerAddress, "POST", values);
+                WebRequest request = WebRequest.Create(ServerAddress);
+                request.Method = "POST"; // для отправки используется метод Post
+                                         // данные для отправки
+                // преобразуем данные в массив байтов
+                byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(requestTest);
+                // устанавливаем тип содержимого - параметр ContentType
+                request.ContentType = "application/x-www-form-urlencoded";
+                // Устанавливаем заголовок Content-Length запроса - свойство ContentLength
+                request.ContentLength = byteArray.Length;
+
+                //записываем данные в поток запроса
+                using (Stream dataStream = request.GetRequestStream())
+                {
+                    dataStream.Write(byteArray, 0, byteArray.Length);
+                }
+
+
+                WebResponse response =  request.GetResponse();
+                string resp = "0";
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        resp = reader.ReadToEnd();
+                    }
+                }                //byte[] response = _Client.UploadValues(ServerAddress, "POST", values);
                 //byte[] response = _Client.UploadValues("http://track.t1604.ru/api/track.php", "POST", values);
-                string resp = Encoding.Default.GetString(response);
+        //        string resp = Encoding.Default.GetString(response);
                 isTransmitted = resp.StartsWith("200 ") || resp == "200";
             }
             catch (Exception ex)

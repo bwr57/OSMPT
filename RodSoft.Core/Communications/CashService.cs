@@ -19,7 +19,7 @@ namespace RodSoft.Core.Communications
 
         public DateTime RefDate { get; } = new DateTime(2019, 1, 1);
 
-        protected MessageSerializatorBase<T> _TrackMessageSerializator = new MessageSerializatorBase<T>();
+        public MessageSerializatorBase<T> TrackMessageSerializator = new MessageSerializatorBase<T>();
 
         public string CashFolder { get; set; }
 
@@ -116,7 +116,7 @@ namespace RodSoft.Core.Communications
                 int index = 0;
                 while(stream.Position < stream.Length)
                 {
-                    T trackMessage = _TrackMessageSerializator.DeserializeObject(stream);
+                    T trackMessage = TrackMessageSerializator.DeserializeObject(stream);
                     if(!cashedDataRef.SendedItems.Contains(index++))
                     {
                         lock(Messages)
@@ -196,8 +196,9 @@ namespace RodSoft.Core.Communications
 
             trackMessage.Index = _Index++;
             trackMessage.FileName = _CurrentFile.FileName;
-            _TrackMessageSerializator.SerializeObject(_DataStream, trackMessage);
+            TrackMessageSerializator.SerializeObject(_DataStream, trackMessage);
             _DataStream.Flush();
+            _IndexSteam.Flush();
             if (time.Subtract(_StartTime).TotalSeconds > MaximumSecondsPerCashFile || _Index >= MaximumItemsPerCashFile)
             {
                 _DataStream.Close();

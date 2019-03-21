@@ -15,15 +15,25 @@ namespace RodSoft.Core.Communications
 
         public bool IsActive { get; set; }
 
+        private MessageSerializatorBase<T> _MessageSerializator;
+        public MessageSerializatorBase<T> MessageSerializator
+        {
+            get { return _MessageSerializator; }
+            set
+            {
+                if (CashService != null)
+                    CashService.TrackMessageSerializator = value;
+                _MessageSerializator = value;
+            }
+        }
 
-
-        public CashService<T> CashService { get; set; } = new CashService<T>();
+        public CashService<T> CashService { get; set; } 
         public int TransmittingPeriod { get; internal set; } = 1000;
 
         public RemoteDiagnosticClient()
-            : base()
         {
-            Start();
+            CashService = new CashService<T>();
+            MessageSerializator = new MessageSerializatorBase<T>();
         }
 
         public RemoteDiagnosticClient(CommunicationSettings telemetrySettings)
@@ -33,11 +43,13 @@ namespace RodSoft.Core.Communications
                 if (telemetrySettings.TransmittingPeriod > 0)
                     this.TransmittingPeriod = telemetrySettings.TransmittingPeriod;
             }
-            Start();
+            CashService = new CashService<T>(telemetrySettings);
+            MessageSerializator = new MessageSerializatorBase<T>();
         }
 
-        protected virtual void Start()
+        public virtual void Start()
         {
+            CashService.LoadCashedData();
             _Thread = new Thread(new ThreadStart(ProcessTransmitting));
             _Thread.Start();
         }
@@ -94,7 +106,7 @@ namespace RodSoft.Core.Communications
             DisposeClient();
         }
 
-        public void SendMessage(T trackMessage)
+        public virtual void SendMessage(T trackMessage)
         {
             trackMessage.WasTransmitted = false;
             this.CashService.SaveMessage(trackMessage);
