@@ -40,7 +40,7 @@ namespace RodSoft.Core.Communications.Http
         {
             if (_Client == null)
                 return false;
-            NameValueCollection values = MessageSerializator.PrepareCollection(message, null);
+//            NameValueCollection values = MessageSerializator.PrepareCollection(message, null);
             string requestTest = MessageSerializator.PrepareRequest(message, null);
             bool isTransmitted = false;
             try
@@ -73,7 +73,7 @@ namespace RodSoft.Core.Communications.Http
                 }                //byte[] response = _Client.UploadValues(ServerAddress, "POST", values);
                 //byte[] response = _Client.UploadValues("http://track.t1604.ru/api/track.php", "POST", values);
         //        string resp = Encoding.Default.GetString(response);
-                isTransmitted = resp.StartsWith("200 ") || resp == "200";
+                isTransmitted = resp.StartsWith("200 ") || resp == "200" || resp.StartsWith("200\n");
             }
             catch (Exception ex)
             {

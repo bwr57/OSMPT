@@ -6,10 +6,11 @@ namespace RodSoft.OSM.Tracking.Telemetry.Serialization
 {
     public class GPSMessageSerializator : MessageSerializatorBase<GPSDataMessage>
     {
-        public virtual NameValueCollection PrepareCollection(GPSDataMessage message, NameValueCollection nameValueCollection)
+        public override NameValueCollection PrepareCollection(GPSDataMessage message, NameValueCollection nameValueCollection)
         {
-            if (nameValueCollection == null)
-                nameValueCollection = new NameValueCollection();
+            base.PrepareCollection(message, nameValueCollection);
+            //if (nameValueCollection == null)
+            //    nameValueCollection = new NameValueCollection();
             CultureInfo cultureInfo = CultureInfo.GetCultureInfo("en-US");
             if (message is GPSDataMessage)
             {

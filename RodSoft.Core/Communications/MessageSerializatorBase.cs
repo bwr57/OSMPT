@@ -11,6 +11,14 @@ namespace RodSoft.Core.Communications
 {
     public class MessageSerializatorBase<T> where T : CashedMessage
     {
+        public class DataMemberInfo
+        {
+            public string Name;
+            public MemberInfo MemberInfo;
+            public TransmittedAttribute AdditionalProperties;
+        }
+
+        protected IList<IList<DataMemberInfo>> _SectionList;
 
         protected BinaryFormatter _BinaryFormatter = new BinaryFormatter();
 
@@ -55,42 +63,62 @@ namespace RodSoft.Core.Communications
                 }
                 else
                 {
-                    IList<MemberInfo> messageMembers = new List<MemberInfo>();
-//                    SortedDictionary<int, MemberInfo> messageMembers = new SortedDictionary<int, MemberInfo>();
-                    foreach (MemberInfo member in messageType.GetMembers())
-                    {
-                        TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
-                        if (assignableAttribute != null)
-                            messageMembers.Add(member);
- //                           messageMembers.Add(assignableAttribute.SectionIndex, member);
-                    }
-                    messageMembers = messageMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).SectionIndex).ToList();
-                    int sectionIndex = 0;
-                    IList<MemberInfo> sectionMembers = new List<MemberInfo>();
-//                    SortedDictionary<int, MemberInfo> sectionMembers = new SortedDictionary<int, MemberInfo>();
-                    foreach (MemberInfo member in messageMembers)
-                    {
-                        TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
-                        if (assignableAttribute.SectionIndex != sectionIndex)
+                    if (_SectionList == null)
+                        FormMembersList(message);
+                    foreach (IList<DataMemberInfo> sectionMembers in _SectionList)
+                        foreach (DataMemberInfo memberInfo in sectionMembers)
                         {
-                            sectionMembers = sectionMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).PropertyIndex).ToList();
-                            foreach (MemberInfo sectionMemberInfo in sectionMembers)
-                            {
-                                AddValueToCollection(message, nameValueCollection, sectionMemberInfo);
-                            }
-                            sectionMembers.Clear();
-                            sectionIndex = assignableAttribute.SectionIndex;
+                            AddValueToCollection(message, nameValueCollection, memberInfo.MemberInfo);
                         }
-                        sectionMembers.Add(member);
-                    }
-                    sectionMembers = messageMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).PropertyIndex).ToList();
-                    foreach (MemberInfo sectionMemberInfo in sectionMembers)
-                    {
-                        AddValueToCollection(message, nameValueCollection, sectionMemberInfo);
-                    }
+                    //sectionMembers = messageMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).PropertyIndex).ToList();
+                    //foreach (MemberInfo sectionMemberInfo in sectionMembers)
+                    //{
+                    //    AddValueToCollection(message, nameValueCollection, sectionMemberInfo);
+                    //}
                 }
             }
             return nameValueCollection;
+        }
+
+        public virtual void FormMembersList(T message)
+        {
+            Type messageType = message.GetType();
+            _SectionList = new List<IList<DataMemberInfo>>();
+            IList<DataMemberInfo> messageMembers = new List<DataMemberInfo>();
+            //                    SortedDictionary<int, MemberInfo> messageMembers = new SortedDictionary<int, MemberInfo>();
+            foreach (MemberInfo member in messageType.GetMembers())
+            {
+                TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
+                if (assignableAttribute != null)
+                {
+                    DataMemberInfo dataMemberInfo = new DataMemberInfo() { Name = member.Name, MemberInfo = member, AdditionalProperties = assignableAttribute };
+                    messageMembers.Add(dataMemberInfo);
+                }
+                //                    messageMembers.Add(member);
+                //                           messageMembers.Add(assignableAttribute.SectionIndex, member);
+            }
+            messageMembers = messageMembers.OrderBy(memberInfo => memberInfo.AdditionalProperties.SectionIndex).ToList();
+            int sectionIndex = 0;
+            IList<DataMemberInfo> sectionMembers = new List<DataMemberInfo>();
+            //                    SortedDictionary<int, MemberInfo> sectionMembers = new SortedDictionary<int, MemberInfo>();
+            foreach (DataMemberInfo member in messageMembers)
+            {
+                //                TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
+                if (member.AdditionalProperties.SectionIndex != sectionIndex)
+                {
+                    sectionMembers = sectionMembers.OrderBy(memberInfo => memberInfo.AdditionalProperties.PropertyIndex).ToList();
+                    _SectionList.Add(sectionMembers);
+                    sectionMembers = new List<DataMemberInfo>();
+                    //foreach (MemberInfo sectionMemberInfo in sectionMembers)
+                    //{
+                    //    AddValueToCollection(message, nameValueCollection, sectionMemberInfo);
+                    //}
+                    //sectionMembers.Clear();
+                    sectionIndex = member.AdditionalProperties.SectionIndex;
+                }
+                sectionMembers.Add(member);
+            }
+            _SectionList.Add(sectionMembers);
         }
 
         public static string ConcatRequest(string request, string newPart)
@@ -104,18 +132,18 @@ namespace RodSoft.Core.Communications
             {
                 if (request == null)
                     request = "Time=" + message.Time.ToShortDateString() + " " + message.Time.ToLongTimeString().Replace(':', '.');
-//                request = ConcatRequest(request, "Time=" + message.Time.ToShortDateString() + " " + message.Time.ToLongTimeString().Replace(':', '.'));
+                //                request = ConcatRequest(request, "Time=" + message.Time.ToShortDateString() + " " + message.Time.ToLongTimeString().Replace(':', '.'));
             }
             return request;
         }
 
-        public virtual string  AutoPrepareRequest(T message, string request, bool isAnyMember)
+        public virtual string AutoPrepareRequest(T message, string request, bool isAnyMember)
         {
             if (message is T)
             {
                 if (request == null)
                     request = "Time=" + message.Time.ToShortDateString() + " " + message.Time.ToLongTimeString().Replace(':', '.');
-//                request = ConcatRequest(request, "Time=" + message.Time.ToShortDateString() + " " + message.Time.ToLongTimeString().Replace(':', '.'));
+                //                request = ConcatRequest(request, "Time=" + message.Time.ToShortDateString() + " " + message.Time.ToLongTimeString().Replace(':', '.'));
             }
             if (message != null)
             {
@@ -139,39 +167,46 @@ namespace RodSoft.Core.Communications
                 }
                 else
                 {
-                    IList<MemberInfo> messageMembers = new List<MemberInfo>();
-                    //                    SortedDictionary<int, MemberInfo> messageMembers = new SortedDictionary<int, MemberInfo>();
-                    foreach (MemberInfo member in messageType.GetMembers())
-                    {
-                        TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
-                        if (assignableAttribute != null)
-                            messageMembers.Add(member);
-                        //                           messageMembers.Add(assignableAttribute.SectionIndex, member);
-                    }
-                    messageMembers = messageMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).SectionIndex).ToList();
-                    int sectionIndex = 0;
-                    IList<MemberInfo> sectionMembers = new List<MemberInfo>();
-                    //                    SortedDictionary<int, MemberInfo> sectionMembers = new SortedDictionary<int, MemberInfo>();
-                    foreach (MemberInfo member in messageMembers)
-                    {
-                        TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
-                        if (assignableAttribute.SectionIndex != sectionIndex)
+                    //IList<MemberInfo> messageMembers = new List<MemberInfo>();
+                    ////                    SortedDictionary<int, MemberInfo> messageMembers = new SortedDictionary<int, MemberInfo>();
+                    //foreach (MemberInfo member in messageType.GetMembers())
+                    //{
+                    //    TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
+                    //    if (assignableAttribute != null)
+                    //        messageMembers.Add(member);
+                    //    //                           messageMembers.Add(assignableAttribute.SectionIndex, member);
+                    //}
+                    //messageMembers = messageMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).SectionIndex).ToList();
+                    //int sectionIndex = 0;
+                    //IList<MemberInfo> sectionMembers = new List<MemberInfo>();
+                    ////                    SortedDictionary<int, MemberInfo> sectionMembers = new SortedDictionary<int, MemberInfo>();
+                    //foreach (MemberInfo member in messageMembers)
+                    //{
+                    //    TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
+                    //    if (assignableAttribute.SectionIndex != sectionIndex)
+                    //    {
+                    //        sectionMembers = sectionMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).PropertyIndex).ToList();
+                    //        foreach (MemberInfo sectionMemberInfo in sectionMembers)
+                    //        {
+                    //            request = AddToRequest(message, request, sectionMemberInfo);
+                    //        }
+                    //        sectionMembers.Clear();
+                    //        sectionIndex = assignableAttribute.SectionIndex;
+                    //    }
+                    //    sectionMembers.Add(member);
+                    //}
+                    //sectionMembers = sectionMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).PropertyIndex).ToList();
+                    //foreach (MemberInfo sectionMemberInfo in sectionMembers)
+                    //{
+                    //    request = AddToRequest(message, request, sectionMemberInfo);
+                    //}
+                    if (_SectionList == null)
+                        FormMembersList(message);
+                    foreach (IList<DataMemberInfo> sectionMembers in _SectionList)
+                        foreach (DataMemberInfo memberInfo in sectionMembers)
                         {
-                            sectionMembers = sectionMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).PropertyIndex).ToList();
-                            foreach (MemberInfo sectionMemberInfo in sectionMembers)
-                            {
-                                request = AddToRequest(message, request, sectionMemberInfo);
-                            }
-                            sectionMembers.Clear();
-                            sectionIndex = assignableAttribute.SectionIndex;
+                            request = AddToRequest(message, request, memberInfo.MemberInfo, memberInfo.AdditionalProperties);
                         }
-                        sectionMembers.Add(member);
-                    }
-                    sectionMembers = messageMembers.OrderBy(memberInfo => ((TransmittedAttribute)memberInfo.GetCustomAttribute(typeof(TransmittedAttribute), true)).PropertyIndex).ToList();
-                    foreach (MemberInfo sectionMemberInfo in sectionMembers)
-                    {
-                        request = AddToRequest(message, request, sectionMemberInfo);
-                    }
                 }
             }
             return request;
@@ -187,31 +222,52 @@ namespace RodSoft.Core.Communications
             return (T)_BinaryFormatter.Deserialize(stream);
         }
 
-        private static void AddValueToCollection(T message, NameValueCollection nameValueCollection, MemberInfo member)
+        private static void AddValueToCollection(T message, NameValueCollection nameValueCollection, MemberInfo member, TransmittedAttribute assignableAttribute)
         {
             string formatString = "{0}";
-            TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
-            if (assignableAttribute != null && assignableAttribute.FormatString != null)
-                formatString = "{0:" + assignableAttribute.FormatString + "}";
+            string messageFieldIdentificator = member.Name;
+            if (assignableAttribute != null)
+            {
+                if (assignableAttribute.FormatString != null)
+                    formatString = "{0:" + assignableAttribute.FormatString + "}";
+                if (!String.IsNullOrEmpty(assignableAttribute.MessageIdentificator))
+                    messageFieldIdentificator = assignableAttribute.MessageIdentificator;
+            }
             if (member.MemberType == MemberTypes.Field)
-                nameValueCollection.Add(member.Name, String.Format(formatString, ((FieldInfo)member).GetValue(message)));
+                nameValueCollection.Add(messageFieldIdentificator, String.Format(formatString, ((FieldInfo)member).GetValue(message)));
             else
             if (member.MemberType == MemberTypes.Property)
-                nameValueCollection.Add(member.Name,  String.Format(CultureInfo.GetCultureInfo("en-US"), "{0:0}", ((PropertyInfo)member).GetValue(message)));
+                nameValueCollection.Add(messageFieldIdentificator, String.Format(CultureInfo.GetCultureInfo("en-US"), formatString, ((PropertyInfo)member).GetValue(message)));
+        }
+
+        private static void AddValueToCollection(T message, NameValueCollection nameValueCollection, MemberInfo member)
+        {
+            AddValueToCollection(message, nameValueCollection, member, (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true));
+        }
+
+
+        private static string AddToRequest(T message, string request, MemberInfo member, TransmittedAttribute assignableAttribute)
+        {
+            string formatString = "{0}";
+            string messageFieldIdentificator = member.Name;
+            if (assignableAttribute != null)
+            {
+                if (assignableAttribute.FormatString != null)
+                    formatString = "{0:" + assignableAttribute.FormatString + "}";
+                if (!String.IsNullOrEmpty(assignableAttribute.MessageIdentificator))
+                    messageFieldIdentificator = assignableAttribute.MessageIdentificator;
+            }
+            if (member.MemberType == MemberTypes.Field)
+                request = ConcatRequest(request, messageFieldIdentificator + "=" + String.Format(CultureInfo.GetCultureInfo("en-US"), formatString, ((FieldInfo)member).GetValue(message)));
+            else
+            if (member.MemberType == MemberTypes.Property)
+                request = ConcatRequest(request, messageFieldIdentificator + "=" + String.Format(CultureInfo.GetCultureInfo("en-US"), formatString, ((PropertyInfo)member).GetValue(message)));
+            return request;
         }
 
         private static string AddToRequest(T message, string request, MemberInfo member)
         {
-            string formatString = "{0}";
-            TransmittedAttribute assignableAttribute = (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true);
-            if (assignableAttribute != null && assignableAttribute.FormatString != null)
-                formatString = "{0:" + assignableAttribute.FormatString + "}";
-            if (member.MemberType == MemberTypes.Field)
-                request = ConcatRequest(request, String.IsNullOrEmpty(request) ? "" : "&" + member.Name + "=" + String.Format(formatString, ((FieldInfo)member).GetValue(message)));
-            else
-            if (member.MemberType == MemberTypes.Property)
-                request = ConcatRequest(request, member.Name + "=" + String.Format(CultureInfo.GetCultureInfo("en-US"), "{0:0}", ((PropertyInfo)member).GetValue(message)));
-            return request;
+            return AddToRequest(message, request, member, (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true));
         }
     }
 }

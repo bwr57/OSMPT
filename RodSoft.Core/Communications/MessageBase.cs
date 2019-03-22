@@ -8,6 +8,7 @@ namespace RodSoft.Core.Communications
         public int SectionIndex { get; set; }
         public int PropertyIndex { get; set; }
         public string FormatString { get; set; }
+        public string MessageIdentificator { get; set; }
     }
 
     [Serializable]
