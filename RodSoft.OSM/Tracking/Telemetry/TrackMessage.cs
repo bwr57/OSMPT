@@ -4,7 +4,7 @@ using System;
 namespace RodSoft.OSM.Tracking.Telemetry
 {
     [Serializable]
-    public class TrackMessage : CashedMessage
+    public class TrackMessage : MessageBase
     {
         public DateTime Time;
         public string Vehicle;

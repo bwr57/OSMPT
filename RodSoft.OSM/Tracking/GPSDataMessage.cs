@@ -4,7 +4,7 @@ using System;
 namespace RodSoft.OSM.Tracking
 {
     [Serializable]
-    public class GPSDataMessage : CashedMessage, IVehicleGeoData
+    public class GPSDataMessage : ActivatedControllerAgent, IVehicleGeoData
     {
         [Transmitted(FormatString = "0.#######", MessageIdentificator ="G1")]
         public double Latitude{ get; set; }

@@ -9,6 +9,7 @@ namespace RodSoft.Core.Communications
         public int PropertyIndex { get; set; }
         public string FormatString { get; set; }
         public string MessageIdentificator { get; set; }
+        public bool WriteType { get; set; }
     }
 
     [Serializable]

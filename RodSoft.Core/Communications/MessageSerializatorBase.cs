@@ -9,7 +9,7 @@ using System.Globalization;
 
 namespace RodSoft.Core.Communications
 {
-    public class MessageSerializatorBase<T> where T : CashedMessage
+    public class MessageSerializatorBase<T>  where T : MessageBase
     {
         public class DataMemberInfo
         {
@@ -21,6 +21,9 @@ namespace RodSoft.Core.Communications
         protected IList<IList<DataMemberInfo>> _SectionList;
 
         protected BinaryFormatter _BinaryFormatter = new BinaryFormatter();
+
+        public string MessageIdentificatorPrefix { get; set; }
+        public string GeneralMessageIdentificatorPrefix { get; set; }
 
         public virtual NameValueCollection PrepareCollection(T message, NameValueCollection nameValueCollection)
         {
@@ -212,17 +215,17 @@ namespace RodSoft.Core.Communications
             return request;
         }
 
-        public virtual void SerializeObject(Stream stream, T obj)
+        public virtual void SerializeObject(Stream stream, CashedMessage<T> obj)
         {
             _BinaryFormatter.Serialize(stream, obj);
         }
 
-        public virtual T DeserializeObject(Stream stream)
+        public virtual CashedMessage<T> DeserializeObject(Stream stream)
         {
-            return (T)_BinaryFormatter.Deserialize(stream);
+            return (CashedMessage<T>)_BinaryFormatter.Deserialize(stream);
         }
 
-        private static void AddValueToCollection(T message, NameValueCollection nameValueCollection, MemberInfo member, TransmittedAttribute assignableAttribute)
+        private void AddValueToCollection(T message, NameValueCollection nameValueCollection, MemberInfo member, TransmittedAttribute assignableAttribute)
         {
             string formatString = "{0}";
             string messageFieldIdentificator = member.Name;
@@ -240,22 +243,31 @@ namespace RodSoft.Core.Communications
                 nameValueCollection.Add(messageFieldIdentificator, String.Format(CultureInfo.GetCultureInfo("en-US"), formatString, ((PropertyInfo)member).GetValue(message)));
         }
 
-        private static void AddValueToCollection(T message, NameValueCollection nameValueCollection, MemberInfo member)
+        private void AddValueToCollection(T message, NameValueCollection nameValueCollection, MemberInfo member)
         {
             AddValueToCollection(message, nameValueCollection, member, (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true));
         }
 
 
-        private static string AddToRequest(T message, string request, MemberInfo member, TransmittedAttribute assignableAttribute)
+        private string AddToRequest(T message, string request, MemberInfo member, TransmittedAttribute assignableAttribute)
         {
             string formatString = "{0}";
-            string messageFieldIdentificator = member.Name;
+            string messageFieldIdentificator = String.IsNullOrEmpty(MessageIdentificatorPrefix) ? member.Name : MessageIdentificatorPrefix + member.Name;
             if (assignableAttribute != null)
             {
                 if (assignableAttribute.FormatString != null)
                     formatString = "{0:" + assignableAttribute.FormatString + "}";
                 if (!String.IsNullOrEmpty(assignableAttribute.MessageIdentificator))
                     messageFieldIdentificator = assignableAttribute.MessageIdentificator;
+                if (assignableAttribute.WriteType)
+                    messageFieldIdentificator = String.IsNullOrEmpty(GeneralMessageIdentificatorPrefix) ? message.GetType().Name + messageFieldIdentificator : GeneralMessageIdentificatorPrefix + messageFieldIdentificator;
+                else
+                {
+                    if (!String.IsNullOrEmpty(MessageIdentificatorPrefix))
+                    {
+                        messageFieldIdentificator = MessageIdentificatorPrefix + messageFieldIdentificator;
+                    }
+                }
             }
             if (member.MemberType == MemberTypes.Field)
                 request = ConcatRequest(request, messageFieldIdentificator + "=" + String.Format(CultureInfo.GetCultureInfo("en-US"), formatString, ((FieldInfo)member).GetValue(message)));
@@ -265,7 +277,7 @@ namespace RodSoft.Core.Communications
             return request;
         }
 
-        private static string AddToRequest(T message, string request, MemberInfo member)
+        private string AddToRequest(T message, string request, MemberInfo member)
         {
             return AddToRequest(message, request, member, (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true));
         }

@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace RodSoft.Core.Communications
 {
-    public abstract class RemoteDiagnosticClient<T> : IActivated, IDisposable where T : CashedMessage
+    public abstract class RemoteDiagnosticClient<T> : IActivated, IDisposable where T : MessageBase
     {
 
         private Thread _Thread;
@@ -54,7 +54,7 @@ namespace RodSoft.Core.Communications
             _Thread.Start();
         }
 
-        protected abstract bool TrasmitMessage(T message);
+        protected abstract bool TrasmitMessage(CashedMessage<T> message);
 
         protected abstract bool IsReady();
 
@@ -69,7 +69,7 @@ namespace RodSoft.Core.Communications
                     int initialCount = 0;
                     while (CashService.Messages.Count > 0)
                     {
-                        T trackMessage;
+                        CashedMessage<T> trackMessage;
                         lock (CashService.Messages)
                             if (initialCount == CashService.Messages.Count)
                                 trackMessage = CashService.Messages[0];
@@ -108,7 +108,7 @@ namespace RodSoft.Core.Communications
 
         public virtual void SendMessage(T trackMessage)
         {
-            trackMessage.WasTransmitted = false;
+//            trackMessage.WasTransmitted = false;
             this.CashService.SaveMessage(trackMessage);
         }
 

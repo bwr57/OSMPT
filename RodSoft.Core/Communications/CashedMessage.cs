@@ -3,18 +3,19 @@
 namespace RodSoft.Core.Communications
 {
     [Serializable]
-    public class CashedMessage : MessageBase
+    public class CashedMessage<TMessage> where TMessage : MessageBase
     {
         public bool WasTransmitted;
         public int Index;
         public string FileName;
+        public TMessage Message;
 
         public CashedMessage()
         {        }
 
-        public CashedMessage(object source)
+        public CashedMessage(TMessage message)
         {
-            Assign(source);
+            Message = message;
         }
 
     }

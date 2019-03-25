@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace RodSoft.Core.Communications
 {
-    public class CashService<T> where T : CashedMessage
+    public class CashService<T> where T : MessageBase
     {
         public class CashedDataRef
         {
@@ -35,7 +35,7 @@ namespace RodSoft.Core.Communications
 
         protected IList<CashedDataRef> _CashedData = new List<CashedDataRef>();
 
-        public IList<T> Messages = new List<T>();
+        public IList<CashedMessage<T>> Messages = new List<CashedMessage<T>>();
 
         protected CashedDataRef _CurrentFile;
 
@@ -116,7 +116,7 @@ namespace RodSoft.Core.Communications
                 int index = 0;
                 while(stream.Position < stream.Length)
                 {
-                    T trackMessage = TrackMessageSerializator.DeserializeObject(stream);
+                    CashedMessage<T> trackMessage = TrackMessageSerializator.DeserializeObject(stream);
                     if(!cashedDataRef.SendedItems.Contains(index++))
                     {
                         lock(Messages)
@@ -165,14 +165,15 @@ namespace RodSoft.Core.Communications
 
         public void SaveMessage(T trackMessage)
         {
-            Save(trackMessage);
+            CashedMessage<T> cashedMessage = new CashedMessage<T>(trackMessage);
+            Save(cashedMessage);
             lock (Messages)
             {
-                Messages.Add(trackMessage);
+                Messages.Add(cashedMessage);
             }
         }
 
-        public virtual int Save(T trackMessage)
+        public virtual int Save(CashedMessage<T> trackMessage)
         {
             DateTime time = DateTime.Now;
             if (_DataStream == null)
@@ -198,30 +199,43 @@ namespace RodSoft.Core.Communications
             trackMessage.FileName = _CurrentFile.FileName;
             TrackMessageSerializator.SerializeObject(_DataStream, trackMessage);
             _DataStream.Flush();
-            _IndexSteam.Flush();
-            if (time.Subtract(_StartTime).TotalSeconds > MaximumSecondsPerCashFile || _Index >= MaximumItemsPerCashFile)
+            lock (_IndexSteam)
             {
-                _DataStream.Close();
-                _DataStream.Dispose();
-                _DataStream = null;
-                _IndexSteam.Close();
-                _IndexSteam.Dispose();
-                _IndexSteam = null;
-                _CurrentFile = null;
+                _IndexSteam.Flush();
+                if (time.Subtract(_StartTime).TotalSeconds > MaximumSecondsPerCashFile || _Index >= MaximumItemsPerCashFile)
+                {
+                    _DataStream.Close();
+                    _DataStream.Dispose();
+                    _DataStream = null;
+                    _IndexSteam.Close();
+                    _IndexSteam.Dispose();
+                    _IndexSteam = null;
+                    _CurrentFile = null;
+                }
             }
             return _Index - 1;
         }
 
-        public virtual void RegisterSending(T trackMessage)//string fileName, short index
+        public virtual void RegisterSending(CashedMessage<T> trackMessage)//string fileName, short index
         {
-            if(trackMessage.FileName == _FileName && _IndexSteam != null)
+            bool indexSaved = false;
+            if (trackMessage.FileName == _FileName && _IndexSteam != null)
             {
-                _IndexSteam.WriteByte((byte)((trackMessage.Index & 0xFF00) >> 8));
-                _IndexSteam.WriteByte((byte)(trackMessage.Index & 0xFF));
-                _IndexSteam.Flush();
-                _CurrentFile.SendedItems.Add(trackMessage.Index);
+                try
+                {
+                    lock (_IndexSteam)
+                    {
+                        _IndexSteam.WriteByte((byte)((trackMessage.Index & 0xFF00) >> 8));
+                        _IndexSteam.WriteByte((byte)(trackMessage.Index & 0xFF));
+                        _IndexSteam.Flush();
+                        _CurrentFile.SendedItems.Add(trackMessage.Index);
+                        indexSaved = true;
+                    }
+                }
+                catch
+                { }
             }
-            else
+            if(!indexSaved)
             {
                 string fileName = String.Format("{0}\\{1}", CashFolder, trackMessage.FileName);
                 using (Stream indexSteam = File.Open(fileName + ".idx", FileMode.Open))
@@ -232,6 +246,7 @@ namespace RodSoft.Core.Communications
                     indexSteam.Dispose();
                 }
             }
+
             lock (Messages)
             {
                 Messages.Remove(trackMessage);

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RodSoft.Core.Communications.Http
 {
-    public class PostRemoteDiagnosticClient<T> : RemoteDiagnosticClient<T> where T : CashedMessage
+    public class PostRemoteDiagnosticClient<T> : RemoteDiagnosticClient<T> where T : MessageBase
     {
         private ServiceClient _Client = new ServiceClient();
 
@@ -36,12 +36,12 @@ namespace RodSoft.Core.Communications.Http
             }
          }
 
-        protected override bool TrasmitMessage(T message)
+        protected override bool TrasmitMessage(CashedMessage<T> message)
         {
             if (_Client == null)
                 return false;
 //            NameValueCollection values = MessageSerializator.PrepareCollection(message, null);
-            string requestTest = MessageSerializator.PrepareRequest(message, null);
+            string requestTest = MessageSerializator.PrepareRequest(message.Message, null);
             bool isTransmitted = false;
             try
             {
@@ -54,7 +54,7 @@ namespace RodSoft.Core.Communications.Http
                 request.ContentType = "application/x-www-form-urlencoded";
                 // Устанавливаем заголовок Content-Length запроса - свойство ContentLength
                 request.ContentLength = byteArray.Length;
-
+                request.Timeout = 500;
                 //записываем данные в поток запроса
                 using (Stream dataStream = request.GetRequestStream())
                 {
