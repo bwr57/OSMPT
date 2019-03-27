@@ -2,6 +2,8 @@
 {
     public class CommunicationSettings
     {
+        public bool Enable;
+        public string VehicleNumber;
         public int ServiceType;
         public string ServerAddress;
         public int TransmittingPeriod;

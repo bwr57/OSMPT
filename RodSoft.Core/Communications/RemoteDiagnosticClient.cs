@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace RodSoft.Core.Communications
 {
-    public abstract class RemoteDiagnosticClient<T> : IActivated, IDisposable where T : MessageBase
+    public abstract class RemoteDiagnosticClient<T> : IActivatedController, IDisposable where T : MessageBase
     {
 
         private Thread _Thread;
@@ -14,6 +14,8 @@ namespace RodSoft.Core.Communications
         private bool _IsEnabled = true;
 
         public bool IsActive { get; set; }
+
+        public string Name { get; set; }
 
         private MessageSerializatorBase<T> _MessageSerializator;
         public MessageSerializatorBase<T> MessageSerializator

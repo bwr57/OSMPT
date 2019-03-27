@@ -91,6 +91,12 @@ namespace Rodsoft.Core.RegistryOperations
                             Registry.SetValue(registryFolderName, field.Name, field.GetValue(settings).ToString(), RegistryValueKind.String);
                             break;
                         }
+                    case "Boolean":
+                        {
+                            bool value = (bool)field.GetValue(settings);
+                            Registry.SetValue(registryFolderName, field.Name, value ? 1 : 0, RegistryValueKind.DWord);
+                            break;
+                        }
                     default:
                         {
                             if (field.FieldType.IsClass)
@@ -110,7 +116,7 @@ namespace Rodsoft.Core.RegistryOperations
                             Registry.SetValue(registryFolderName, property.Name, property.GetValue(settings, null), RegistryValueKind.String);
                             break;
                         }
-                    case "Integer":
+                    case "Int32":
                         {
                             Registry.SetValue(registryFolderName, property.Name, property.GetValue(settings, null), RegistryValueKind.DWord);
                             break;
@@ -118,6 +124,12 @@ namespace Rodsoft.Core.RegistryOperations
                     case "Double":
                         {
                             Registry.SetValue(registryFolderName, property.Name, property.GetValue(settings, null).ToString(), RegistryValueKind.String);
+                            break;
+                        }
+                    case "Boolean":
+                        {
+                            bool value = (bool)property.GetValue(settings);
+                            Registry.SetValue(registryFolderName, property.Name, value ? 1 : 0, RegistryValueKind.DWord);
                             break;
                         }
                     default:
@@ -163,6 +175,12 @@ namespace Rodsoft.Core.RegistryOperations
                                 field.SetValue(settings, parameterValue);
                             break;
                         }
+                    case "Boolean":
+                        {
+                            bool value = ((int)Registry.GetValue(registryFolderName, field.Name, 0) > 0);
+                            field.SetValue(settings, value);
+                            break;
+                        }
                     default:
                         {
                             if (field.FieldType.IsClass)
@@ -185,7 +203,7 @@ namespace Rodsoft.Core.RegistryOperations
                             property.SetValue(settings, Registry.GetValue(registryFolderName, property.Name, null), null);
                             break;
                         }
-                    case "Integer":
+                    case "Int32":
                         {
                             property.SetValue(settings, Registry.GetValue(registryFolderName, property.Name, 0), null);
                             break;
@@ -195,6 +213,12 @@ namespace Rodsoft.Core.RegistryOperations
                             double parameterValue = 0;
                             if (Double.TryParse((string)Registry.GetValue(registryFolderName, property.Name, "0"), out parameterValue))
                                 property.SetValue(settings, parameterValue, null);
+                            break;
+                        }
+                    case "Boolean":
+                        {
+                            bool value = ((int)Registry.GetValue(registryFolderName, property.Name, 0) > 0);
+                            property.SetValue(settings, value, null);
                             break;
                         }
                     default:

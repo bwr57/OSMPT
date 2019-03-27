@@ -121,6 +121,7 @@ namespace RodSoft.Core.Communications
                 }
                 sectionMembers.Add(member);
             }
+            sectionMembers = sectionMembers.OrderBy(memberInfo => memberInfo.AdditionalProperties.PropertyIndex).ToList();
             _SectionList.Add(sectionMembers);
         }
 
