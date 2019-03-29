@@ -2,6 +2,7 @@
 {
     public class TelemetrySettings
     {
+        public bool Enabled;
         public string ServerAddress;
         public int TransmittingPeriod;
         public int RequestTimeout;

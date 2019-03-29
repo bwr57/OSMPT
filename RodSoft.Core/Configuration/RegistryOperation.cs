@@ -177,7 +177,12 @@ namespace Rodsoft.Core.RegistryOperations
                         }
                     case "Boolean":
                         {
-                            bool value = ((int)Registry.GetValue(registryFolderName, field.Name, 0) > 0);
+                            object v = Registry.GetValue(registryFolderName, field.Name, 0);
+                            bool value = false;
+                            if (v is int)
+                            {
+                                value = ((int)v > 0);
+                            }
                             field.SetValue(settings, value);
                             break;
                         }

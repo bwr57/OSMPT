@@ -237,11 +237,7 @@ namespace RodSoft.Core.Communications
                 if (!String.IsNullOrEmpty(assignableAttribute.MessageIdentificator))
                     messageFieldIdentificator = assignableAttribute.MessageIdentificator;
             }
-            if (member.MemberType == MemberTypes.Field)
-                nameValueCollection.Add(messageFieldIdentificator, String.Format(formatString, ((FieldInfo)member).GetValue(message)));
-            else
-            if (member.MemberType == MemberTypes.Property)
-                nameValueCollection.Add(messageFieldIdentificator, String.Format(CultureInfo.GetCultureInfo("en-US"), formatString, ((PropertyInfo)member).GetValue(message)));
+            nameValueCollection.Add(messageFieldIdentificator, String.Format(formatString, GetMemberValue(message, member)));
         }
 
         private void AddValueToCollection(T message, NameValueCollection nameValueCollection, MemberInfo member)
@@ -270,17 +266,26 @@ namespace RodSoft.Core.Communications
                     }
                 }
             }
-            if (member.MemberType == MemberTypes.Field)
-                request = ConcatRequest(request, messageFieldIdentificator + "=" + String.Format(CultureInfo.GetCultureInfo("en-US"), formatString, ((FieldInfo)member).GetValue(message)));
-            else
-            if (member.MemberType == MemberTypes.Property)
-                request = ConcatRequest(request, messageFieldIdentificator + "=" + String.Format(CultureInfo.GetCultureInfo("en-US"), formatString, ((PropertyInfo)member).GetValue(message)));
+            request = ConcatRequest(request, messageFieldIdentificator + "=" + String.Format(CultureInfo.GetCultureInfo("en-US"), formatString, GetMemberValue(message, member)));
             return request;
         }
 
         private string AddToRequest(T message, string request, MemberInfo member)
         {
             return AddToRequest(message, request, member, (TransmittedAttribute)member.GetCustomAttribute(typeof(TransmittedAttribute), true));
+        }
+
+        private static object GetMemberValue(object source, MemberInfo member)
+        {
+            object value = 0;
+            if (member.MemberType == MemberTypes.Field)
+                value = ((FieldInfo)member).GetValue(source);
+            else
+            if (member.MemberType == MemberTypes.Property)
+                value = ((PropertyInfo)member).GetValue(source);
+            if (value is bool)
+                value = ((bool)value) ? 1 : 0;
+            return value;
         }
     }
 }

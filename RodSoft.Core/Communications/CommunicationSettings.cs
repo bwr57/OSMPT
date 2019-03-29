@@ -2,7 +2,7 @@
 {
     public class CommunicationSettings
     {
-        public bool Enable;
+        public bool Enabled;
         public string VehicleNumber;
         public int ServiceType;
         public string ServerAddress;

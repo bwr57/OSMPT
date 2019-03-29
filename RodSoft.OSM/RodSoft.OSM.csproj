@@ -84,6 +84,7 @@
       <DependentUpon>TrackTooltip.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tracking\ExtendedVehicleData.cs" />
+    <Compile Include="Tracking\GPSSettings.cs" />
     <Compile Include="Tracking\Registrator\GeoLocationLogger.cs" />
     <Compile Include="Tracking\GpxDriver.cs" />
     <Compile Include="Tracking\IVehicleGeoDataAgentFactory.cs" />
