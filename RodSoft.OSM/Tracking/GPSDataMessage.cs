@@ -11,11 +11,11 @@ namespace RodSoft.OSM.Tracking
         [Transmitted(FormatString = "0.#######", MessageIdentificator = "G2")]
         public double Longitude{ get; set; }
         [Transmitted(FormatString = "0.#", MessageIdentificator = "G3")]
-        public double Altitude{ get; set; }
+        public Single Altitude{ get; set; }
         [Transmitted(FormatString = "0", MessageIdentificator = "G4")]
-        public double Speed{ get; set; }
+        public short Speed{ get; set; }
         [Transmitted(FormatString = "0", MessageIdentificator = "G5")]
-        public double Course{ get; set; }
+        public short Course{ get; set; }
 
         public GPSDataMessage()
         { }

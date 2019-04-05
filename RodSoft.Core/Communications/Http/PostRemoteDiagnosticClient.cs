@@ -41,7 +41,7 @@ namespace RodSoft.Core.Communications.Http
             if (_Client == null)
                 return false;
 //            NameValueCollection values = MessageSerializator.PrepareCollection(message, null);
-            string requestTest = MessageSerializator.PrepareRequest(message.Message, null);
+            string requestTest = CashedMessageSerializer.MessageSerializer.PrepareRequest(message.Message, null);
             bool isTransmitted = false;
             try
             {
@@ -71,8 +71,8 @@ namespace RodSoft.Core.Communications.Http
                         resp = reader.ReadToEnd();
                     }
                 }                //byte[] response = _Client.UploadValues(ServerAddress, "POST", values);
-                //byte[] response = _Client.UploadValues("http://track.t1604.ru/api/track.php", "POST", values);
-        //        string resp = Encoding.Default.GetString(response);
+                                 //byte[] response = _Client.UploadValues("http://track.t1604.ru/api/track.php", "POST", values);
+                                 //        string resp = Encoding.Default.GetString(response);http://localhost:54831/Default.aspx
                 isTransmitted = resp.StartsWith("200 ") || resp == "200" || resp.StartsWith("200\n");
             }
             catch (Exception ex)
@@ -94,6 +94,7 @@ namespace RodSoft.Core.Communications.Http
                 _Client.Dispose();
                 _Client = null;
             }
+            base.DisposeClient();
         }
     }
 }

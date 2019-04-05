@@ -60,7 +60,7 @@ namespace RodSoft.OSM.Tracking
                                             Double elevation = 0;
                                             if (Double.TryParse(trDataNode.LastChild.Value, NumberStyles.AllowDecimalPoint, CultureInfo.GetCultureInfo("en-US"), out elevation))
                                             {
-                                                tr.Altitude = elevation;
+                                                tr.Altitude = Convert.ToSingle( elevation);
                                                 break;
                                             }
  //                                           tr.Altitude = 0;

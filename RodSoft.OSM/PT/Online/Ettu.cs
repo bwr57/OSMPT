@@ -24,10 +24,10 @@ namespace RodSoft.OSM.PT.Online
             vd.Time = this.ATime;
             vd.Id = BOARD_ID;
             vd.Number = this.BOARD_NUM.ToString();
-            vd.Speed = this.Velocity;
-            vd.Course = this.Course + 90;
+            vd.Speed = Convert.ToInt16(this.Velocity);
+            vd.Course = Convert.ToInt16(this.Course + 90);
             if (vd.Course > 360)
-                vd.Course = vd.Course - 360;
+                vd.Course = Convert.ToInt16( vd.Course - 360);
             vd.Line = this.Route;
             vd.Operator = "ЕТТУ";
             return vd;

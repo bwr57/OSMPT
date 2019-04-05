@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace RodSoft.Core.Communications
 {
-    public class CashService<T> where T : MessageBase
+    public class CashService<T> : IDisposable where T : MessageBase
     {
         public class CashedDataRef
         {
@@ -19,7 +19,8 @@ namespace RodSoft.Core.Communications
 
         public DateTime RefDate { get; } = new DateTime(2019, 1, 1);
 
-        public MessageSerializatorBase<T> TrackMessageSerializator = new MessageSerializatorBase<T>();
+//        public MessageSerializatorBase<T> TrackMessageSerializator = new MessageSerializatorBase<T>();
+        public CashedMessageSerializer<T> TrackMessageSerializator = new CashedMessageSerializer<T>();
 
         public string CashFolder { get; set; }
 
@@ -107,26 +108,64 @@ namespace RodSoft.Core.Communications
             }
             _CashedData = _CashedData.OrderBy(cashedDataRef => cashedDataRef.Ticks).ToList();
         }
+        /*
+                public virtual bool LoadCashedData(CashedDataRef cashedDataRef)
+                {
+                    string fileName = String.Format("{0}\\{1}.dat", CashFolder, cashedDataRef.FileName);
+                    using (Stream stream = new FileStream(fileName, FileMode.Open))
+                    {
+                        int index = 0;
+                        while(stream.Position < stream.Length)
+                        {
+                            CashedMessage<T> trackMessage = TrackMessageSerializator.DeserializeObject(stream);
+                            if(!cashedDataRef.SendedItems.Contains(index++))
+                            {
+                                lock(Messages)
+                                    Messages.Insert(cashedDataRef.LoadedItemsCount++, trackMessage);
+                            }
+                        }
+                        stream.Close();
+                        stream.Dispose();
+                    }
+                    cashedDataRef.IsLoaded = true;
+                    return cashedDataRef.LoadedItemsCount > 0;
+                }
+        */
 
         public virtual bool LoadCashedData(CashedDataRef cashedDataRef)
         {
             string fileName = String.Format("{0}\\{1}.dat", CashFolder, cashedDataRef.FileName);
-            using (Stream stream = new FileStream(fileName, FileMode.Open))
+            byte[] savedData = null;
+            try
             {
-                int index = 0;
-                while(stream.Position < stream.Length)
+                using (Stream stream = new FileStream(fileName, FileMode.Open))
                 {
-                    CashedMessage<T> trackMessage = TrackMessageSerializator.DeserializeObject(stream);
-                    if(!cashedDataRef.SendedItems.Contains(index++))
+                    savedData = new byte[(int)stream.Length];
+                    stream.Read(savedData, 0, (int)stream.Length);
+                    stream.Close();
+                    stream.Dispose();
+                }
+                if (savedData != null)
+                {
+                    int index = 0;
+                    int position = 0;
+                    while (index < savedData.Length)
                     {
-                        lock(Messages)
-                            Messages.Insert(cashedDataRef.LoadedItemsCount++, trackMessage);
+                        CashedMessage<T> trackMessage = new CashedMessage<T>();
+                        trackMessage = (CashedMessage<T>)TrackMessageSerializator.DeserializeObject(savedData, ref position, trackMessage);
+                        if (!cashedDataRef.SendedItems.Contains(index++))
+                        {
+                            lock (Messages)
+                                Messages.Insert(cashedDataRef.LoadedItemsCount++, trackMessage);
+                        }
                     }
                 }
-                stream.Close();
-                stream.Dispose();
+                cashedDataRef.IsLoaded = true;
             }
-            cashedDataRef.IsLoaded = true;
+            catch (Exception ex)
+            {
+                cashedDataRef.IsLoaded = false;
+            }
             return cashedDataRef.LoadedItemsCount > 0;
         }
 
@@ -197,7 +236,25 @@ namespace RodSoft.Core.Communications
 
             trackMessage.Index = _Index++;
             trackMessage.FileName = _CurrentFile.FileName;
-            TrackMessageSerializator.SerializeObject(_DataStream, trackMessage);
+            //            TrackMessageSerializator.SerializeObject(_DataStream, trackMessage);
+            TrackMessageSerializator.WriteToBinaryStream(_DataStream, trackMessage, false);
+            //            byte[] serializedMessage = TrackMessageSerializator.SerializeBinary(trackMessage);
+/*
+            MemoryStream stream = new MemoryStream();
+            TrackMessageSerializator.WriteToBinaryStream(stream, trackMessage, false);
+            BinaryReader sr = new BinaryReader(stream);
+            sr.BaseStream.Position = 0;
+            byte[] saved = sr.ReadBytes((int)sr.BaseStream.Length);
+//            byte[] saved = stream.GetBuffer();
+            int currentIndex = 0;
+            CashedMessage<T> trackMessage1 = new CashedMessage<T>();
+            object deserealizedObject = TrackMessageSerializator.DeserializeObject(saved, ref currentIndex, trackMessage1);
+            sr.Close();
+            sr.Dispose();
+            stream.Close();
+            stream.Dispose();
+
+    */
             _DataStream.Flush();
             lock (_IndexSteam)
             {
@@ -258,6 +315,23 @@ namespace RodSoft.Core.Communications
                     LoadCashedData(_CashedData[1]);
                 DeleteCashFiles(cashedDataRef);
             }
+        }
+
+        public void Dispose()
+        {
+            if (_DataStream != null)
+            {
+                _DataStream.Close();
+                _DataStream.Dispose();
+                _DataStream = null;
+            }
+            if (_IndexSteam != null)
+            {
+                _IndexSteam.Close();
+                _IndexSteam.Dispose();
+                _IndexSteam = null;
+            }
+            _CurrentFile = null;
         }
     } 
 }

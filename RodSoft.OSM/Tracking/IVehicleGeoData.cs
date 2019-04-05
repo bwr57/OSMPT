@@ -7,8 +7,8 @@ namespace RodSoft.OSM.Tracking
         DateTime Time { get; set; }
         double Latitude { get; set; }
         double Longitude { get; set; }
-        double Speed { get; set; }
-        double Course{ get; set; }
-        double Altitude{ get; set; }
+        short Speed { get; set; }
+        short Course{ get; set; }
+        Single Altitude{ get; set; }
     }
 }

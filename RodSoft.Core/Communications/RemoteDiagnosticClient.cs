@@ -17,15 +17,30 @@ namespace RodSoft.Core.Communications
 
         public string Name { get; set; }
 
-        private MessageSerializatorBase<T> _MessageSerializator;
-        public MessageSerializatorBase<T> MessageSerializator
+        public MessageSerializatorBase<T> MessageSerializer
         {
-            get { return _MessageSerializator; }
+            get
+            {
+                if (CashedMessageSerializer != null)
+                    return CashedMessageSerializer.MessageSerializer;
+                return null;
+            }
+            set
+            {
+                if (CashedMessageSerializer != null)
+                    CashedMessageSerializer.MessageSerializer = value;
+            }
+        }
+
+        private CashedMessageSerializer<T> _CashedMessageSerializer;
+        public CashedMessageSerializer<T> CashedMessageSerializer
+        {
+            get { return _CashedMessageSerializer; }
             set
             {
                 if (CashService != null)
                     CashService.TrackMessageSerializator = value;
-                _MessageSerializator = value;
+                _CashedMessageSerializer = value;
             }
         }
 
@@ -35,7 +50,7 @@ namespace RodSoft.Core.Communications
         public RemoteDiagnosticClient()
         {
             CashService = new CashService<T>();
-            MessageSerializator = new MessageSerializatorBase<T>();
+            CashedMessageSerializer = new CashedMessageSerializer<T>();
         }
 
         public RemoteDiagnosticClient(CommunicationSettings telemetrySettings)
@@ -46,7 +61,7 @@ namespace RodSoft.Core.Communications
                     this.TransmittingPeriod = telemetrySettings.TransmittingPeriod;
             }
             CashService = new CashService<T>(telemetrySettings);
-            MessageSerializator = new MessageSerializatorBase<T>();
+            CashedMessageSerializer = new CashedMessageSerializer<T>();
         }
 
         public virtual void Start()
@@ -60,7 +75,10 @@ namespace RodSoft.Core.Communications
 
         protected abstract bool IsReady();
 
-        protected abstract void DisposeClient();
+        protected virtual void DisposeClient()
+        {
+            CashService.Dispose();
+        }
 
         protected virtual void ProcessTransmitting()
         {

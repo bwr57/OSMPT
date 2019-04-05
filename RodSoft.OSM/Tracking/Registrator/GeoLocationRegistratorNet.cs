@@ -38,9 +38,9 @@ namespace RodSoft.OSM.Tracking.Registrator
         {
             GeoPosition<GeoCoordinate> position = _RegistratorService.Position;
             VehicleGeoData vehicleGeoData = VehicleGeoDataAgentFactory == null ? new VehicleGeoData(position.Location.Latitude, position.Location.Longitude) : VehicleGeoDataAgentFactory.CreateVehicleGeoDataAgent(position.Location.Latitude, position.Location.Longitude);
-            vehicleGeoData.Course = position.Location.Course;
-            vehicleGeoData.Speed = position.Location.Speed;
-            vehicleGeoData.Altitude = position.Location.Altitude;
+            vehicleGeoData.Course = Convert.ToInt16(double.IsNaN(position.Location.Course) ? 0 : position.Location.Course);
+            vehicleGeoData.Speed = Convert.ToInt16(double.IsNaN(position.Location.Speed) ? 0 : position.Location.Speed);
+            vehicleGeoData.Altitude = Convert.ToSingle(double.IsNaN(position.Location.Altitude) ? 0 : position.Location.Altitude);
             vehicleGeoData.Time = position.Timestamp.DateTime;
             return vehicleGeoData;
         }

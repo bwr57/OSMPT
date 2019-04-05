@@ -38,7 +38,7 @@ namespace RodSoft.OSM.Tracking.Registrator
 
             VehicleGeoData vehicleGeoData = VehicleGeoDataAgentFactory == null ? new VehicleGeoData(report.Latitude, report.Longitude) : VehicleGeoDataAgentFactory.CreateVehicleGeoDataAgent(report.Latitude, report.Longitude);
             vehicleGeoData.Time = report.Timestamp;
-            vehicleGeoData.Altitude = report.Altitude;
+            vehicleGeoData.Altitude = Convert.ToSingle(report.Altitude);
             return vehicleGeoData;
         }
 

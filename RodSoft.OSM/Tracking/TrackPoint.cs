@@ -19,7 +19,7 @@ namespace RodSoft.OSM.Tracking
         public virtual void SetExtendedVehicleData(IDictionary<string, double> extendedVehicleData)
         {
             if (extendedVehicleData.ContainsKey("speed"))
-                this.Speed = extendedVehicleData["speed"] * 3.6;
+                this.Speed = Convert.ToInt16( extendedVehicleData["speed"] * 3.6);
         }
 
 

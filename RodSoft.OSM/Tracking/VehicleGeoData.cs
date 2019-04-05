@@ -9,11 +9,11 @@ namespace RodSoft.OSM.Tracking
     {
         public DateTime Time{ get; set; }
         [Transmitted(PropertyIndex =4, FormatString ="0")]
-        public double Speed{ get; set; }
+        public short Speed{ get; set; }
         [Transmitted(PropertyIndex = 5, FormatString = "0")]
-        public double Course{ get; set; }
+        public short Course{ get; set; }
         [Transmitted(PropertyIndex = 3, FormatString = "0.#")]
-        public double Altitude{ get; set; }
+        public Single Altitude{ get; set; }
 
         /// <summary>
         /// Creates a geo coordinate.
