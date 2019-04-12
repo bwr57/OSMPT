@@ -17,6 +17,8 @@ namespace RodSoft.Core.Communications
 
         public string Name { get; set; }
 
+        public CommucationLogFile<T> LogFile = new CommucationLogFile<T>();
+
         public MessageSerializatorBase<T> MessageSerializer
         {
             get
@@ -59,9 +61,12 @@ namespace RodSoft.Core.Communications
             {
                 if (telemetrySettings.TransmittingPeriod > 0)
                     this.TransmittingPeriod = telemetrySettings.TransmittingPeriod;
+                LogFile.CommucationLogFileName = telemetrySettings.CommucationLogFileName;
+                LogFile.CommucationLogMode = telemetrySettings.CommucationLogMode;
             }
             CashService = new CashService<T>(telemetrySettings);
             CashedMessageSerializer = new CashedMessageSerializer<T>();
+
         }
 
         public virtual void Start()

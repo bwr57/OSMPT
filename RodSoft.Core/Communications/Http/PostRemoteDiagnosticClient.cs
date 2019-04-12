@@ -74,9 +74,13 @@ namespace RodSoft.Core.Communications.Http
                                  //byte[] response = _Client.UploadValues("http://track.t1604.ru/api/track.php", "POST", values);
                                  //        string resp = Encoding.Default.GetString(response);http://localhost:54831/Default.aspx
                 isTransmitted = resp.StartsWith("200 ") || resp == "200" || resp.StartsWith("200\n");
+                if(LogFile != null && ((LogFile.CommucationLogMode > 1) || (!isTransmitted && LogFile.CommucationLogMode > 0)))
+                    LogFile.WriteRecord(message, resp);
             }
             catch (Exception ex)
             {
+                if (LogFile != null && LogFile.CommucationLogMode > 0)
+                    LogFile.WriteRecord(message, ex.Message);
                 return false;
             }
             return isTransmitted;

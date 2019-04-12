@@ -11,5 +11,7 @@
         public string CashFolder;
         public int MaximumItemsPerCashFile;
         public int MaximumSecondsPerCashFile;
+        public int CommucationLogMode;
+        public string CommucationLogFileName;
     }
 }

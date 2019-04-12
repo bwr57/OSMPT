@@ -48,6 +48,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Communications\IActivated.cs" />
+    <Compile Include="Communications\CommucationLogFile.cs" />
     <Compile Include="Communications\MessageBase.cs" />
     <Compile Include="Communications\CommunicationSettings.cs" />
     <Compile Include="Communications\RemoteDiagnosticClient.cs" />

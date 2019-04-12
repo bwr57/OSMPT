@@ -246,5 +246,11 @@ namespace Rodsoft.Core.RegistryOperations
             string registryFolderName = GetFullRegistryFolderName();
             LoadSettingsAuto(registryFolderName, settings);
         }
+
+        public virtual void LoadSettingsAuto()
+        {
+            LoadSettingsAuto(this);
+        }
+
     }
 }
