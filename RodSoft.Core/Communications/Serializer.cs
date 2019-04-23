@@ -334,7 +334,7 @@ namespace RodSoft.Core.Communications
             }
             if (deserializedObjectType != null)
             {
-                Debug.WriteLine(memberInfo.Name + " " + currentIndex.ToString());
+//                Debug.WriteLine(memberInfo.Name + " " + currentIndex.ToString());
                 memberTypeName = deserializedObjectType.FullName;
                 if (deserializedObjectType.IsValueType)
                 {

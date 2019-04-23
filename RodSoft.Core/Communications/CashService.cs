@@ -149,7 +149,7 @@ namespace RodSoft.Core.Communications
                 {
                     int index = 0;
                     int position = 0;
-                    while (index < savedData.Length)
+                    while (position < savedData.Length)
                     {
                         CashedMessage<T> trackMessage = new CashedMessage<T>();
                         trackMessage = (CashedMessage<T>)TrackMessageSerializator.DeserializeObject(savedData, ref position, trackMessage);
@@ -276,11 +276,11 @@ namespace RodSoft.Core.Communications
         public virtual void RegisterSending(CashedMessage<T> trackMessage)//string fileName, short index
         {
             bool indexSaved = false;
-            if (trackMessage.FileName == _FileName && _IndexSteam != null)
+            try
             {
-                try
+                lock (_IndexSteam)
                 {
-                    lock (_IndexSteam)
+                    if (trackMessage.FileName == _FileName && _IndexSteam != null)
                     {
                         _IndexSteam.WriteByte((byte)((trackMessage.Index & 0xFF00) >> 8));
                         _IndexSteam.WriteByte((byte)(trackMessage.Index & 0xFF));
@@ -289,10 +289,10 @@ namespace RodSoft.Core.Communications
                         indexSaved = true;
                     }
                 }
-                catch
-                { }
             }
-            if(!indexSaved)
+            catch
+            { }
+            if (!indexSaved)
             {
                 string fileName = String.Format("{0}\\{1}", CashFolder, trackMessage.FileName);
                 using (Stream indexSteam = File.Open(fileName + ".idx", FileMode.Open))

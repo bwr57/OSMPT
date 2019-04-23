@@ -55,9 +55,13 @@
     <Compile Include="Communications\MessageSerializatorBase.cs" />
     <Compile Include="Communications\Serializer.cs" />
     <Compile Include="Configuration\RegistryOperation.cs" />
+    <Compile Include="Configuration\RegistryOperationBase.cs" />
+    <Compile Include="Configuration\ServiceSettingRegistryOperation.cs" />
+    <Compile Include="Configuration\ServiceSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\ArrayTools.cs" />
     <Compile Include="Tools\CompareBit.cs" />
+    <Compile Include="Tools\EventTools.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -2,7 +2,7 @@
 using System;
 using System.Reflection;
 
-namespace Rodsoft.Core.RegistryOperations
+namespace RodSoft.Core.Configuration
 {
     /// <summary>
     /// Базовый класс для сохранения и чтения настроек в реестре
@@ -94,7 +94,7 @@ namespace Rodsoft.Core.RegistryOperations
                     case "Boolean":
                         {
                             bool value = (bool)field.GetValue(settings);
-                            Registry.SetValue(registryFolderName, field.Name, value ? 1 : 0, RegistryValueKind.DWord);
+                            SaveBoolean(registryFolderName, field.Name, value);
                             break;
                         }
                     default:
@@ -102,6 +102,11 @@ namespace Rodsoft.Core.RegistryOperations
                             if (field.FieldType.IsClass)
                             {
                                 SaveSettingsAuto(registryFolderName + "\\" + field.Name, field.GetValue(settings));
+                            }
+                            else
+                            if(field.FieldType.IsEnum)
+                            {
+                                Registry.SetValue(registryFolderName, field.Name, (int)field.GetValue(settings), RegistryValueKind.DWord);
                             }
                             break;
                         }
@@ -129,7 +134,7 @@ namespace Rodsoft.Core.RegistryOperations
                     case "Boolean":
                         {
                             bool value = (bool)property.GetValue(settings);
-                            Registry.SetValue(registryFolderName, property.Name, value ? 1 : 0, RegistryValueKind.DWord);
+                            SaveBoolean(registryFolderName, property.Name, value);
                             break;
                         }
                     default:
@@ -138,12 +143,25 @@ namespace Rodsoft.Core.RegistryOperations
                             {
                                 SaveSettingsAuto(registryFolderName + "\\" + property.Name, property.GetValue(settings, null));
                             }
+                            else
+                            if (property.PropertyType.IsEnum)
+                            {
+                                Registry.SetValue(registryFolderName, property.Name, (int)property.GetValue(settings), RegistryValueKind.DWord);
+                            }
                             break;
                         }
                 }
             }
         }
-        
+
+        public static void SaveBoolean(string registryFolderName, string key, bool value)
+        {
+            try
+            {
+                Registry.SetValue(registryFolderName, key, value ? 1 : 0, RegistryValueKind.DWord);
+            }
+            catch { }
+        }
 
         public virtual void SaveSettingsAuto(object settings)
         {
@@ -177,12 +195,7 @@ namespace Rodsoft.Core.RegistryOperations
                         }
                     case "Boolean":
                         {
-                            object v = Registry.GetValue(registryFolderName, field.Name, 0);
-                            bool value = false;
-                            if (v is int)
-                            {
-                                value = ((int)v > 0);
-                            }
+                            bool value = LoadBoolean(registryFolderName, field.Name);
                             field.SetValue(settings, value);
                             break;
                         }
@@ -193,6 +206,11 @@ namespace Rodsoft.Core.RegistryOperations
                                 object subSettings = Activator.CreateInstance(field.FieldType);
                                 LoadSettingsAuto(registryFolderName + "\\" + field.Name, subSettings);
                                 field.SetValue(settings, subSettings);
+                            }
+                            else
+                            if (field.FieldType.IsEnum)
+                            {
+                                field.SetValue(settings, Registry.GetValue(registryFolderName, field.Name, 0));
                             }
                             break;
                         }
@@ -222,7 +240,7 @@ namespace Rodsoft.Core.RegistryOperations
                         }
                     case "Boolean":
                         {
-                            bool value = ((int)Registry.GetValue(registryFolderName, property.Name, 0) > 0);
+                            bool value = LoadBoolean(registryFolderName, property.Name);
                             property.SetValue(settings, value, null);
                             break;
                         }
@@ -234,11 +252,26 @@ namespace Rodsoft.Core.RegistryOperations
                                 LoadSettingsAuto(registryFolderName + "\\" + property.Name, subSettings);
                                 property.SetValue(settings, subSettings, null);
                             }
+                            else
+                            if (property.PropertyType.IsEnum)
+                            {
+                                property.SetValue(settings, (Enum)Registry.GetValue(registryFolderName, property.Name, 0), null);
+                            }
                             break;
                         }
                 }
-             }
+            }
 
+        }
+
+        public static bool LoadBoolean(string registryFolderName, string key)
+        {
+            object v = Registry.GetValue(registryFolderName, key, 0);
+            if (v is int)
+            {
+                return ((int)v > 0);
+            }
+            return false;
         }
 
         public virtual void LoadSettingsAuto(object settings)
@@ -252,5 +285,21 @@ namespace Rodsoft.Core.RegistryOperations
             LoadSettingsAuto(this);
         }
 
+        public virtual object Create()
+        {
+            return null;
+        }
+
+        public virtual object Load(object settings)
+        {
+            if (settings == null)
+                return Create();
+            return settings;
+        }
+
+        public virtual void Save(object settings)
+        {
+
+        }
     }
 }

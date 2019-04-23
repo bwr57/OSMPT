@@ -1,8 +1,9 @@
-﻿namespace RodSoft.Core.Communications
+﻿using RodSoft.Core.Configuration;
+
+namespace RodSoft.Core.Communications
 {
-    public class CommunicationSettings
+    public class CommunicationSettings : ServiceSettings
     {
-        public bool Enabled;
         public string VehicleNumber;
         public int ServiceType;
         public string ServerAddress;

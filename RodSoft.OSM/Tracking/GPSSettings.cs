@@ -1,7 +1,8 @@
-﻿namespace RodSoft.OSM.Tracking
+﻿using RodSoft.Core.Configuration;
+
+namespace RodSoft.OSM.Tracking
 {
-    public class GPSSettings
+    public class GPSSettings : ServiceSettings
     {
-        public bool Enabled;
     }
 }
