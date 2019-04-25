@@ -41,10 +41,10 @@ namespace RodSoft.Core.Communications.Http
             if (_Client == null)
                 return false;
 //            NameValueCollection values = MessageSerializator.PrepareCollection(message, null);
-            string requestTest = CashedMessageSerializer.MessageSerializer.PrepareRequest(message.Message, null);
             bool isTransmitted = false;
             try
             {
+                string requestTest = CashedMessageSerializer.MessageSerializer.PrepareRequest(message.Message, null);
                 WebRequest request = WebRequest.Create(ServerAddress);
                 request.Method = "POST"; // для отправки используется метод Post
                                          // данные для отправки
