@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RodSoft.Core.Serialization;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,46 +8,48 @@ using System.Threading.Tasks;
 
 namespace RodSoft.Core.Communications
 {
-    public class CashedMessageSerializer<T> : Serializer<CashedMessage<T>> where T : MessageBase
+    public class CashedMessageSerializer<T> : BinarySerializer<CashedMessage<T>> where T : MessageBase
     {
-        private MessageSerializatorBase<T> _MessageSerializer = new MessageSerializatorBase<T>();
-        public MessageSerializatorBase<T> MessageSerializer
+        private BinarySerializer<T> _BinaryMessageSerializer = new BinarySerializer<T>();
+        public BinarySerializer<T> BinaryMessageSerializer
         {
-            get { return _MessageSerializer; }
+            get { return _BinaryMessageSerializer; }
             set
             {
                 if(value == null)
                 {
                     IsAutoCreateEmbededObjects = true;
-                    _MessageSerializer = new MessageSerializatorBase<T>();
+                    _BinaryMessageSerializer = new BinarySerializer<T>();
                 }
                 else
                 {
                     IsAutoCreateEmbededObjects = false;
-                    _MessageSerializer = value;
+                    _BinaryMessageSerializer = value;
                 }
             }
         }
+
+        public PostMessageSerializer<T> PostMessageSerializer { get; set; }
 
         public CashedMessageSerializer()
             : base()
         {
         }
 
-        public CashedMessageSerializer(MessageSerializatorBase<T> messageSerializer)
+        public CashedMessageSerializer(BinarySerializer<T> messageSerializer)
             : this()
         {
-            MessageSerializer = messageSerializer;
+            BinaryMessageSerializer = messageSerializer;
         }
 
-        public override void WriteToBinaryStream(Stream stream, object fieldValue, bool isWriteClassName)
+        public override void Serialize(Stream stream, object fieldValue, bool isWriteClassName)
         {
-            base.WriteToBinaryStream(stream, fieldValue, isWriteClassName);
-            if (!IsAutoCreateEmbededObjects && MessageSerializer != null)
+            base.Serialize(stream, fieldValue, isWriteClassName);
+            if (!IsAutoCreateEmbededObjects && BinaryMessageSerializer != null)
             {
                 CashedMessage<T> cashedMessage = fieldValue as CashedMessage<T>;
                 stream.WriteByte((byte)(cashedMessage == null ? 0 : 1));
-                MessageSerializer.WriteToBinaryStream(stream, cashedMessage.Message, false);
+                BinaryMessageSerializer.Serialize(stream, cashedMessage.Message);
             }
         }
 
@@ -54,13 +57,13 @@ namespace RodSoft.Core.Communications
         {
             object deserializedMessage = base.DeserializeObject(serializedObject, ref currentIndex, deserializedObject);
             CashedMessage<T> deserializedCashedMessage = deserializedMessage as CashedMessage<T>;
-            if (deserializedCashedMessage != null)
-                if (!IsAutoCreateEmbededObjects && MessageSerializer != null)
+            if (deserializedCashedMessage != null && deserializedCashedMessage.FileName != null)
+                if (!IsAutoCreateEmbededObjects && BinaryMessageSerializer != null)
                 {
                     if (serializedObject[currentIndex++] == 1)
                     {
-                        deserializedCashedMessage.Message = MessageSerializer.CreateSerializedObjectInstance();
-                        MessageSerializer.DeserializeObject(serializedObject, ref currentIndex, deserializedCashedMessage.Message);
+                        deserializedCashedMessage.Message = BinaryMessageSerializer.CreateSerializedObjectInstance();
+                        BinaryMessageSerializer.DeserializeObject(serializedObject, ref currentIndex, deserializedCashedMessage.Message);
                     }
                 }
             return deserializedMessage;

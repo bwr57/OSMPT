@@ -40,25 +40,35 @@ namespace RodSoft.Core.Communications.Http
         {
             if (_Client == null)
                 return false;
-//            NameValueCollection values = MessageSerializator.PrepareCollection(message, null);
+            if (!(message != null && message.Message != null))
+            {
+                if (LogFile != null)
+                    lock (LogFile)
+                        LogFile.WriteDamagedFileInfo("Null message");
+                return true;
+            }
+            //            NameValueCollection values = MessageSerializator.PrepareCollection(message, null);
             bool isTransmitted = false;
             try
             {
-                string requestTest = CashedMessageSerializer.MessageSerializer.PrepareRequest(message.Message, null);
+ //               string requestTest = CashedMessageSerializer.PostMessageSerializer.PrepareRequest(message.Message, null);
                 WebRequest request = WebRequest.Create(ServerAddress);
                 request.Method = "POST"; // для отправки используется метод Post
                                          // данные для отправки
                 // преобразуем данные в массив байтов
-                byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(requestTest);
+//                byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(requestTest);
                 // устанавливаем тип содержимого - параметр ContentType
                 request.ContentType = "application/x-www-form-urlencoded";
+                byte[] serializedMessage = PostMessageSerializer.Serialize(message.Message);
+
                 // Устанавливаем заголовок Content-Length запроса - свойство ContentLength
-                request.ContentLength = byteArray.Length;
+                request.ContentLength = serializedMessage.Length;
                 request.Timeout = 500;
                 //записываем данные в поток запроса
                 using (Stream dataStream = request.GetRequestStream())
                 {
-                    dataStream.Write(byteArray, 0, byteArray.Length);
+                    dataStream.Write(serializedMessage, 0, serializedMessage.Length);
+ //                   request.ContentLength = dataStream.Length;
                 }
 
 
@@ -75,12 +85,14 @@ namespace RodSoft.Core.Communications.Http
                                  //        string resp = Encoding.Default.GetString(response);http://localhost:54831/Default.aspx
                 isTransmitted = resp.StartsWith("200 ") || resp == "200" || resp.StartsWith("200\n");
                 if(LogFile != null && ((LogFile.CommucationLogMode > 1) || (!isTransmitted && LogFile.CommucationLogMode > 0)))
-                    LogFile.WriteRecord(message, resp);
+                    lock (LogFile)
+                        LogFile.WriteRecord(message, resp);
             }
             catch (Exception ex)
             {
                 if (LogFile != null && LogFile.CommucationLogMode > 0)
-                    LogFile.WriteRecord(message, ex.Message);
+                    lock (LogFile)
+                        LogFile.WriteRecord(message, ex.Message);
                 return false;
             }
             return isTransmitted;

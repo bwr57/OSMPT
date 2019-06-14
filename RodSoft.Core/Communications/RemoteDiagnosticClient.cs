@@ -17,20 +17,30 @@ namespace RodSoft.Core.Communications
 
         public string Name { get; set; }
 
-        public CommucationLogFile<T> LogFile = new CommucationLogFile<T>();
+        private CommucationLogFile<T> _LogFile = new CommucationLogFile<T>();
 
-        public MessageSerializatorBase<T> MessageSerializer
+        public CommucationLogFile<T> LogFile
+        {
+            get { return _LogFile; }
+            set
+            {
+                _LogFile = value;
+                if (CashService != null)
+                    CashService.LogFile = value;
+            }
+        }
+
+        private PostMessageSerializer<T> _PostMessageSerializer;
+
+        public PostMessageSerializer<T> PostMessageSerializer
         {
             get
             {
-                if (CashedMessageSerializer != null)
-                    return CashedMessageSerializer.MessageSerializer;
-                return null;
+                return _PostMessageSerializer;
             }
             set
             {
-                if (CashedMessageSerializer != null)
-                    CashedMessageSerializer.MessageSerializer = value;
+                _PostMessageSerializer = value;
             }
         }
 
@@ -52,6 +62,7 @@ namespace RodSoft.Core.Communications
         public RemoteDiagnosticClient()
         {
             CashService = new CashService<T>();
+            this.CashService.LogFile = LogFile;
             CashedMessageSerializer = new CashedMessageSerializer<T>();
         }
 
@@ -65,6 +76,7 @@ namespace RodSoft.Core.Communications
                 LogFile.CommucationLogMode = telemetrySettings.CommucationLogMode;
             }
             CashService = new CashService<T>(telemetrySettings);
+            this.CashService.LogFile = LogFile;
             CashedMessageSerializer = new CashedMessageSerializer<T>();
 
         }
@@ -115,8 +127,7 @@ namespace RodSoft.Core.Communications
                             IsActive = true;
                             if (isTransmitted)
                             {
-                                CashService.RegisterSending(trackMessage);
-                                initialCount--;
+                                initialCount += CashService.RegisterSending(trackMessage);
                             }
                         }
                         if (!_IsEnabled)

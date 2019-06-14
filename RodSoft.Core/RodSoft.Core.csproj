@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communications\ActiveRemoteDeviceDriverBase.cs" />
+    <Compile Include="Communications\RemoteDeviceDriverBase.cs" />
+    <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Communications\CashedMessage.cs" />
     <Compile Include="Communications\CashedMessageSerializer.cs" />
     <Compile Include="Communications\CashService.cs" />
@@ -52,16 +55,22 @@
     <Compile Include="Communications\MessageBase.cs" />
     <Compile Include="Communications\CommunicationSettings.cs" />
     <Compile Include="Communications\RemoteDiagnosticClient.cs" />
-    <Compile Include="Communications\MessageSerializatorBase.cs" />
-    <Compile Include="Communications\Serializer.cs" />
+    <Compile Include="Communications\PostMessageSerializer.cs" />
+    <Compile Include="Communications\PostRequestSerializer.cs" />
+    <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Configuration\RegistryOperation.cs" />
     <Compile Include="Configuration\RegistryOperationBase.cs" />
     <Compile Include="Configuration\ServiceSettingRegistryOperation.cs" />
     <Compile Include="Configuration\ServiceSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\StandardBinarySerializer.cs" />
     <Compile Include="Tools\ArrayTools.cs" />
     <Compile Include="Tools\CompareBit.cs" />
+    <Compile Include="Tools\EnumWorkParameterBase.cs" />
     <Compile Include="Tools\EventTools.cs" />
+    <Compile Include="Tools\ISelectableListData.cs" />
+    <Compile Include="UI\Speech\SpeechSynthesizerSettings.cs" />
+    <Compile Include="UI\Speech\SpeechSynthesizerSettingsRegistryOperation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -6,11 +6,18 @@ namespace RodSoft.OSM.Tracking.Registrator
     public class GeoLocationRegistratorNet : IGeoPositionRegistrator, IDisposable
     {
 
+        public string Name { get; set; }
+
+        public bool IsActive
+        {
+            get { return GetActiveStatus(); }
+        }
+
         protected GeoCoordinateWatcher _RegistratorService;
 
         public IVehicleGeoDataAgentFactory VehicleGeoDataAgentFactory { get; set; }
 
-        public uint Interval
+        public int Period
         {
             get;
             set;
@@ -26,6 +33,11 @@ namespace RodSoft.OSM.Tracking.Registrator
             if (status == GeoPositionStatus.Initializing)
                 return GeoPositionRegistratorStatus.Initializing;
             return GeoPositionRegistratorStatus.Error;
+        }
+
+        public virtual bool GetActiveStatus()
+        {
+            return GetRegistratorStatus() == GeoPositionRegistratorStatus.Active;
         }
 
         public GeoLocationRegistratorNet()

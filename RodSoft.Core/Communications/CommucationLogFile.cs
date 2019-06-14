@@ -27,5 +27,17 @@ namespace RodSoft.Core.Communications
             catch
             { }
         }
+
+        public void WriteDamagedFileInfo(string recordString)
+        {
+            try
+            {
+                if (CommucationLogMode > 0 && !String.IsNullOrEmpty(CommucationLogFileName))
+                    File.AppendAllLines(CommucationLogFileName, new string[] { String.Format("{0} {1}. {2}", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), recordString) });
+            }
+            catch
+            { }
+        }
+
     }
 }

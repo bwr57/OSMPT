@@ -4,9 +4,9 @@ using System.Globalization;
 
 namespace RodSoft.OSM.Tracking.Telemetry.Serialization
 {
-    public class GPSMessageSerializator : MessageSerializatorBase<GPSDataMessage>
+    public class GPSMessageSerializator : PostMessageSerializer<GPSDataMessage>
     {
-        public override NameValueCollection PrepareCollection(GPSDataMessage message, NameValueCollection nameValueCollection)
+/*        public override NameValueCollection PrepareCollection(GPSDataMessage message, NameValueCollection nameValueCollection)
         {
             base.PrepareCollection(message, nameValueCollection);
             //if (nameValueCollection == null)
@@ -25,5 +25,6 @@ namespace RodSoft.OSM.Tracking.Telemetry.Serialization
                 nameValueCollection.Add("GPS", "0");
             return nameValueCollection;
         }
+        */
     }
 }

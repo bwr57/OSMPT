@@ -10,10 +10,17 @@ namespace RodSoft.OSM.Tracking.Registrator
 
         public IVehicleGeoDataAgentFactory VehicleGeoDataAgentFactory { get; set; }
 
-        public uint Interval
+        public int Period
         {
-            get { return _RegistratorService.ReportInterval; }
-            set { _RegistratorService.ReportInterval = Interval; }
+            get { return (int)_RegistratorService.ReportInterval; }
+            set { _RegistratorService.ReportInterval = (uint)Period; }
+        }
+
+        public string Name { get; set; }
+
+        public bool IsActive
+        {
+            get { return GetActiveStatus(); }
         }
 
         public GeoPositionRegistratorStatus GetRegistratorStatus()
@@ -24,6 +31,11 @@ namespace RodSoft.OSM.Tracking.Registrator
             if (status == 4)
                 return GeoPositionRegistratorStatus.Active;
             return (GeoPositionRegistratorStatus)(status + 1);
+        }
+
+        public virtual bool GetActiveStatus()
+        {
+            return GetRegistratorStatus() == GeoPositionRegistratorStatus.Active;
         }
 
         public GeoLocationRegistrator()

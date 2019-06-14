@@ -34,7 +34,19 @@ namespace RodSoft.OSM.Tracking.Registrator
 
         public TrackPoint LastLocation { get; protected set; }
 
-        public IGeoPositionRegistrator GeoPositionRegistrator { get; protected set; }
+        private IGeoPositionRegistrator _GeoPositionRegistrator = null;
+        public IGeoPositionRegistrator GeoPositionRegistrator
+        {
+            get { return _GeoPositionRegistrator; }
+            set
+            {
+                if (_GeoPositionRegistrator != null)
+                {
+                    lock (_GeoPositionRegistrator) { }
+                }
+                _GeoPositionRegistrator = value;
+            }
+        }
 
         public GeoLocationLogger(bool isTracking)
         {
@@ -52,20 +64,26 @@ namespace RodSoft.OSM.Tracking.Registrator
 
         public virtual void RegisterGeoLocation()
         {
-            if (GeoPositionRegistrator != null)
+            if (_GeoPositionRegistrator != null)
             {
-                LastLocation = GeoPositionRegistrator.GetCurrentPosition() as TrackPoint;
-                LastLocation.Id = _TrackPointID;
-                if (double.IsNaN(LastLocation.Latitude))
+                lock (_GeoPositionRegistrator)
                 {
-                    IsActive = false;
-                }
-                else
-                {
-                    if (IsTracking)
-                        Track.AddTrackPoint(LastLocation);
-                    IsActive = true;
-                    _TrackPointID++;
+                    LastLocation = _GeoPositionRegistrator.GetCurrentPosition() as TrackPoint;
+
+                    LastLocation.Id = _TrackPointID;
+                    if (!this.GeoPositionRegistrator.IsActive || double.IsNaN(LastLocation.Latitude))
+                    {
+                        IsActive = false;
+                    }
+                    else
+                    {
+                        if (IsTracking)
+                        {
+                            Track.AddTrackPoint(LastLocation);
+                            _TrackPointID++;
+                        }
+                        IsActive = true;
+                    }
                 }
             }
 

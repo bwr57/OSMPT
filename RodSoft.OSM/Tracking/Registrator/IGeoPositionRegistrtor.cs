@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RodSoft.Core.Communications;
+using System;
 
 namespace RodSoft.OSM.Tracking.Registrator
 {
@@ -11,11 +12,12 @@ namespace RodSoft.OSM.Tracking.Registrator
         Initializing = 4
     }
 
-    public interface IGeoPositionRegistrator : IDisposable
+    public interface IGeoPositionRegistrator : IActivatedController, IDisposable
     {
+        IVehicleGeoDataAgentFactory VehicleGeoDataAgentFactory { get; set; }
         VehicleGeoData GetCurrentPosition();
         GeoPositionRegistratorStatus GetRegistratorStatus();
-        uint Interval { get; set; }
-        IVehicleGeoDataAgentFactory VehicleGeoDataAgentFactory { get; set; }
+        int Period { get; set; }
     }
+
 }
