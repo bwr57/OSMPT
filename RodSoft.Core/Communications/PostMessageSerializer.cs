@@ -32,7 +32,7 @@ namespace RodSoft.Core.Communications
 
         public static string SerializeDateTime(DateTime messageTime)
         {
-            return String.Format("{0}.{1}.{2} {3}.{4}.{5}", messageTime.Day, messageTime.Month, messageTime.Year, messageTime.Hour, messageTime.Minute, messageTime.Second);
+            return String.Format("{0:00}.{1:00}.{2:00} {3:00}.{4:00}.{5:00}", messageTime.Day, messageTime.Month, messageTime.Year, messageTime.Hour, messageTime.Minute, messageTime.Second);
         }
 
         public override string PrepareRequest(T message, string request)

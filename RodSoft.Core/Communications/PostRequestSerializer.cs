@@ -17,7 +17,7 @@ namespace RodSoft.Core.Communications
     }
     public class PostRequestSerializer<T> : Serializer<T> where T : class
     {
-        protected IDictionary<Type, IList<IList<DataMemberInfo>>> _SectionList = new Dictionary<Type, IList<IList<DataMemberInfo>>>();
+        protected static IDictionary<Type, IList<IList<DataMemberInfo>>> _SectionList = new Dictionary<Type, IList<IList<DataMemberInfo>>>();
 
         public string MessageIdentificatorPrefix { get; set; }
         public string GeneralMessageIdentificatorPrefix { get; set; }
@@ -39,12 +39,16 @@ namespace RodSoft.Core.Communications
         protected override MemberInfo[] CreateMembersList(Type messageType)
         {
             MemberInfo[] members = null;
-            if (_SectionList.ContainsKey(messageType))
+            IList<IList<DataMemberInfo>> sectionList = null;
+            lock (_SectionList)
             {
-                return _Members[messageType];
-            }
-                IList<IList<DataMemberInfo>> sectionList = new List<IList<DataMemberInfo>>();
+                if (_SectionList.ContainsKey(messageType))
+                {
+                    return _Members[messageType];
+                }
+                sectionList = new List<IList<DataMemberInfo>>();
                 _SectionList.Add(messageType, sectionList);
+            }
                 IList<DataMemberInfo> messageMembers = new List<DataMemberInfo>();
                 IDictionary<MemberInfo, string> MemberIdentifiers = new Dictionary<MemberInfo, string>();
             members = base.CreateMembersList(messageType);
@@ -61,8 +65,9 @@ namespace RodSoft.Core.Communications
                     //                    messageMembers.Add(member);
                     //                           messageMembers.Add(assignableAttribute.SectionIndex, member);
                 }
+            messageMembers = messageMembers.OrderBy(memberInfo => memberInfo.AdditionalProperties.SectionIndex).ToList();
+            lock(MembersData)
                 MembersData.Add(messageType, messageMembers);
-                messageMembers = messageMembers.OrderBy(memberInfo => memberInfo.AdditionalProperties.SectionIndex).ToList();
                 int sectionIndex = 0;
                 IList<DataMemberInfo> sectionMembers = new List<DataMemberInfo>();
                 //                    SortedDictionary<int, MemberInfo> sectionMembers = new SortedDictionary<int, MemberInfo>();
@@ -85,7 +90,8 @@ namespace RodSoft.Core.Communications
                 }
                 sectionMembers = sectionMembers.OrderBy(memberInfo => memberInfo.AdditionalProperties.PropertyIndex).ToList();
                 sectionList.Add(sectionMembers);
-            MemberIdentifiersInMessage.Add(messageType, MemberIdentifiers);
+            lock(MemberIdentifiersInMessage)
+                MemberIdentifiersInMessage.Add(messageType, MemberIdentifiers);
             
             return members;
         }
@@ -453,7 +459,7 @@ namespace RodSoft.Core.Communications
                                 if (parts.Length == 2)
                                 {
                                     valueString = parts[0] + " " + parts[1].Replace('.', ':');
-                                    if (DateTime.TryParse(valueString, out value))
+                                    if (DateTime.TryParse(valueString, CultureInfo.GetCultureInfo("ru", "RU") , DateTimeStyles.AdjustToUniversal, out value))
                                         SetMemberValue(deserializedObject, member, value);
                                 }
                                 continue;
@@ -490,6 +496,23 @@ namespace RodSoft.Core.Communications
 
         protected virtual object CustomDeserializeObject(object deserializedObject, MemberInfo member, IDictionary<string, string> recievedData)
         {
+            if (deserializedObject != null)
+            {
+                Type objectType = deserializedObject.GetType();
+                IDictionary<MemberInfo, string> memberIdentifiers = MemberIdentifiersInMessage[objectType];
+                if (memberIdentifiers.ContainsKey(member))
+                {
+                    string memberIdentifier = memberIdentifiers[member];
+                    if (memberIdentifier != null && recievedData.ContainsKey(memberIdentifier))
+                    {
+                        int value = 0;
+                        if (int.TryParse(recievedData[memberIdentifier], out value) && value > 0)
+                        {
+                            return CreateSerializedObjectInstance(GetMemberType(member));
+                        }
+                    }
+                }
+            }
             return null;
         }
 

@@ -4,6 +4,7 @@ namespace RodSoft.Core.Communications
 {
     public class CommunicationSettings : ServiceSettings
     {
+        public bool Enabled;
         public string VehicleNumber;
         public int ServiceType;
         public string ServerAddress;
@@ -12,7 +13,7 @@ namespace RodSoft.Core.Communications
         public string CashFolder;
         public int MaximumItemsPerCashFile;
         public int MaximumSecondsPerCashFile;
-        public int CommucationLogMode;
+        public CommucationLogMode CommucationLogMode;
         public string CommucationLogFileName;
     }
 }

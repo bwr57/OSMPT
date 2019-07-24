@@ -96,7 +96,7 @@
                     <ribbon:RibbonSplitButton  Label="Карта" Name="MapProviderMenu"  KeyTip="V"  VerticalAlignment="Top">
                     </ribbon:RibbonSplitButton >
                     <ribbon:RibbonButton Label="Cut" KeyTip="X" Click="RibbonButton_Click_1" />
-                    <ribbon:RibbonButton Label="Copy" KeyTip="C" />
+                    <ribbon:RibbonButton Label="Copy" KeyTip="C" Click="RibbonButton_Click" />
                     <ribbon:RibbonButton Label="Format Painter" KeyTip="FP" />
                 </ribbon:RibbonGroup>
                 <!-- Employee And Payroll group-->

@@ -1,7 +1,6 @@
-﻿using RodSoft.Core.Communications.Http;
-using System;
-using System.Collections.Specialized;
-using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace RodSoft.Core.Communications
@@ -104,27 +103,63 @@ namespace RodSoft.Core.Communications
                 if (IsReady())
                 {
                     int initialCount = 0;
+                    DateTime now = DateTime.Now;
+                    lock (CashService.Messages)
+                    {
+                        IEnumerable<CashedMessage<T>> lastMessages = CashService.Messages.Where(message => message.WasTransmitted && message.Message != null && now.Subtract(message.Message.Time).TotalSeconds < 10);
+                        if (lastMessages.Count() == 0)
+                        {
+                            initialCount = CashService.Messages.Count;
+                        }
+                        else
+                        {
+                            DateTime lastMessageDateTime = lastMessages.Max(message => message.Message.Time);
+                            try
+                            {
+                                initialCount = CashService.Messages.IndexOf(lastMessages.Where(message => message.Message.Time == lastMessageDateTime).FirstOrDefault());
+                            }
+                            catch { }
+                        }
+                    }
                     while (CashService.Messages.Count > 0)
                     {
                         CashedMessage<T> trackMessage;
                         lock (CashService.Messages)
+                        {
+
                             if (initialCount == CashService.Messages.Count)
                                 trackMessage = CashService.Messages[0];
                             else
                             {
+                                if (initialCount == 0)
+                                    trackMessage = CashService.Messages[CashService.Messages.Count - 1];
+                                else
+                                    trackMessage = CashService.Messages[initialCount];
                                 initialCount = CashService.Messages.Count;
-                                trackMessage = CashService.Messages[CashService.Messages.Count - 1];
                             }
+                        }
                         if (!trackMessage.WasTransmitted)
                         {
-                            bool isTransmitted = TrasmitMessage(trackMessage);
-                            if(!isTransmitted)
+                            bool isTransmitted = false;
+                            string checkErrorMessage = null;
+                            if (CheckTransmittedMessage(trackMessage, ref checkErrorMessage))
                             {
-                                IsActive = false;
-                                break;
-                            }
+                                isTransmitted = TrasmitMessage(trackMessage);
+                                if (!isTransmitted)
+                                {
+                                    IsActive = false;
+                                    break;
+                                }
 
-                            IsActive = true;
+                                IsActive = true;
+                            }
+                            else
+                            {
+                                isTransmitted = true;
+                                if (LogFile != null && LogFile.CommucationLogMode == CommucationLogMode.Full)
+                                    lock (LogFile)
+                                        LogFile.WriteRecord(trackMessage, checkErrorMessage);
+                            }
                             if (isTransmitted)
                             {
                                 initialCount += CashService.RegisterSending(trackMessage);
@@ -140,6 +175,22 @@ namespace RodSoft.Core.Communications
                 Thread.Sleep(TransmittingPeriod);
             }
             DisposeClient();
+        }
+
+        protected virtual bool CheckTransmittedMessage(T message, ref string checkErrorMessage)
+        {
+            if (message != null)
+                return true;
+            checkErrorMessage = "Null message";
+            return false;
+        }
+
+        protected virtual bool CheckTransmittedMessage(CashedMessage<T> message, ref string checkErrorMessage)
+        {
+            if (message != null)
+                return CheckTransmittedMessage(message.Message, ref checkErrorMessage);
+            checkErrorMessage = "Null cash record";
+            return false;
         }
 
         public virtual void SendMessage(T trackMessage)

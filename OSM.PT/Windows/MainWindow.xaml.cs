@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -1671,7 +1673,45 @@ namespace Demo.WindowsPresentation
 
         private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
         {
-        }
+            try
+            {
+                //               string requestTest = CashedMessageSerializer.PostMessageSerializer.PrepareRequest(message.Message, null);
+                WebRequest request = WebRequest.Create("http://track.t1604.ru/api/data.php");
+                request.Method = "POST"; // для отправки используется метод Post
+                                         // данные для отправки
+                                         // преобразуем данные в массив байтов
+                                         //                byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(requestTest);
+                                         // устанавливаем тип содержимого - параметр ContentType
+                request.ContentType = "application/x-www-form-urlencoded";
+                string strRequest = "Start_Time=16.06.2019 11.38.52&Stop_Time=16.06.2019 23.58.52&Vehicle=UAZ501";
+                byte[] serializedMessage = Encoding.UTF8.GetBytes(strRequest);
+                // Устанавливаем заголовок Content-Length запроса - свойство ContentLength
+                request.ContentLength = serializedMessage.Length;
+                request.Timeout = 5000;
+                //записываем данные в поток запроса
+                using (Stream dataStream = request.GetRequestStream())
+                {
+                    dataStream.Write(serializedMessage, 0, serializedMessage.Length);
+                    //                   request.ContentLength = dataStream.Length;
+                }
+
+
+                WebResponse response = request.GetResponse();
+                string resp = "0";
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        resp = reader.ReadToEnd();
+                    }
+                }                //byte[] response = _Client.UploadValues(ServerAddress, "POST", values);
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }    
 
         private void SetMarker(RouterPoint point, string title)
         {
@@ -1988,6 +2028,11 @@ namespace Demo.WindowsPresentation
                 _TrackMessageSender.Dispose();
                 _TrackMessageSender = null;
             }
+        }
+
+        private void RibbonButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         public void RegisterGeoPosition(object sender, EventArgs e)
