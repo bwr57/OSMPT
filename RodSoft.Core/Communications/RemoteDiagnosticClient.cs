@@ -84,6 +84,7 @@ namespace RodSoft.Core.Communications
         {
             CashService.LoadCashedData();
             _Thread = new Thread(new ThreadStart(ProcessTransmitting));
+            _Thread.IsBackground = true;
             _Thread.Start();
         }
 
