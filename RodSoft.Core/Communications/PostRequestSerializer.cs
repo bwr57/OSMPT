@@ -454,14 +454,8 @@ namespace RodSoft.Core.Communications
                             }
                             if (memberTypeName == "System.DateTime")
                             {
-                                DateTime value;
-                                string[] parts = valueString.Split(' ');
-                                if (parts.Length == 2)
-                                {
-                                    valueString = parts[0] + " " + parts[1].Replace('.', ':');
-                                    if (DateTime.TryParse(valueString, CultureInfo.GetCultureInfo("ru", "RU") , DateTimeStyles.AdjustToUniversal, out value))
-                                        SetMemberValue(deserializedObject, member, value);
-                                }
+                                DateTime value = ParseDateTime(valueString);
+                                SetMemberValue(deserializedObject, member, value);
                                 continue;
                             }
                         }
@@ -518,10 +512,15 @@ namespace RodSoft.Core.Communications
 
         public override T Deserialize(byte[] serializedData)
         {
-            IDictionary<string, string> recievedData = new Dictionary<string, string>();
             string req = Encoding.Default.GetString(serializedData);
-            string[] keyValuePairs = req.Split('&');
-            for(int i = 0; i < keyValuePairs.Length; i++)
+            return Deserialize(req);
+        }
+
+        public virtual T Deserialize(string serializedData)
+        {
+            IDictionary<string, string> recievedData = new Dictionary<string, string>();
+            string[] keyValuePairs = serializedData.Split('&');
+            for (int i = 0; i < keyValuePairs.Length; i++)
             {
                 string[] keyValuePair = keyValuePairs[i].Split('=');
                 if (keyValuePair.Length == 2)
@@ -532,6 +531,18 @@ namespace RodSoft.Core.Communications
             T deserializedObject = CreateSerializedObjectInstance();
             FillMemberValues(deserializedObject, recievedData);
             return deserializedObject;
+        }
+
+        public static DateTime ParseDateTime(string valueString)
+        {
+            DateTime value;
+            string[] parts = valueString.Split(' ');
+            if (parts.Length == 2)
+            {
+                valueString = parts[0] + " " + parts[1].Replace('.', ':');
+            }
+            DateTime.TryParse(valueString, CultureInfo.GetCultureInfo("ru", "RU"), DateTimeStyles.AdjustToUniversal, out value);
+            return value;
         }
     }
 }

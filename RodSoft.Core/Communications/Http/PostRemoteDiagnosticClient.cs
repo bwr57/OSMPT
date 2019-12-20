@@ -67,6 +67,8 @@ namespace RodSoft.Core.Communications.Http
                 //записываем данные в поток запроса
                 using (Stream dataStream = request.GetRequestStream())
                 {
+                    //if (DateTime.Now.Second < 30)
+                    //    throw new System.Runtime.InteropServices.SEHException();
                     dataStream.Write(serializedMessage, 0, serializedMessage.Length);
  //                   request.ContentLength = dataStream.Length;
                 }

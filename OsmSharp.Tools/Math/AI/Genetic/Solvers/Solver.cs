@@ -326,7 +326,7 @@ namespace OsmSharp.Tools.Math.AI.Genetic.Solvers
                     }
 
                     // report population generation.
-                    OsmSharp.Tools.Output.OutputStreamHost.Write(string.Format("Generating population{0}/{1}..."), population.Count, _settings.PopulationSize);
+                    OsmSharp.Tools.Output.OutputStreamHost.Write(string.Format("Generating population{0}/{1}...", population.Count, _settings.PopulationSize));
                     this.ReportNew(string.Format("Generating population..."), population.Count, _settings.PopulationSize);
                 });
             }

@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Communications\ActiveRemoteDeviceDriverBase.cs" />
+    <Compile Include="Communications\BackgroundCircleBase.cs" />
     <Compile Include="Communications\RemoteDeviceDriverBase.cs" />
     <Compile Include="Serialization\BinarySerializer.cs" />
     <Compile Include="Communications\CashedMessage.cs" />

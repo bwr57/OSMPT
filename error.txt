@@ -1,0 +1,26 @@
+System.Runtime.InteropServices.SEHException
+  HResult=0x80004005
+  Сообщение = Внешний компонент создал исключение.
+  Источник = mscorlib
+  Трассировка стека:
+   в System.Security.SecurityRuntime.GetSecurityObjectForFrame(StackCrawlMark& stackMark, Boolean create)
+   в System.Security.Principal.WindowsIdentity.SafeImpersonate(SafeAccessTokenHandle userToken, WindowsIdentity wi, StackCrawlMark& stackMark)
+   в System.Security.Principal.WindowsIdentity.Impersonate(StackCrawlMark& stackMark)
+   в System.Security.Principal.WindowsIdentity.Impersonate()
+   в System.Net.AutoWebProxyScriptEngine.ConnectoidChanged()
+   в System.Net.AutoWebProxyScriptEngine.CheckForChanges(Int32& syncStatus)
+   в System.Net.AutoWebProxyScriptEngine.GetProxies(Uri destination, IList`1& proxyList, Int32& syncStatus)
+   в System.Net.WebProxy.GetProxiesAuto(Uri destination, Int32& syncStatus)
+   в System.Net.ProxyScriptChain.GetNextProxy(Uri& proxy)
+   в System.Net.ProxyChain.ProxyEnumerator.MoveNext()
+   в System.Net.ServicePointManager.FindServicePoint(Uri address, IWebProxy proxy, ProxyChain& chain, HttpAbortDelegate& abortDelegate, Int32& abortState)
+   в System.Net.HttpWebRequest.FindServicePoint(Boolean forceFind)
+   в System.Net.HttpWebRequest.GetRequestStream(TransportContext& context)
+   в System.Net.HttpWebRequest.GetRequestStream()
+   в RodSoft.Core.Communications.Http.PostRemoteDiagnosticClient`1.TrasmitMessage(CashedMessage`1 message)
+   в RodSoft.Core.Communications.RemoteDiagnosticClient`1.ProcessTransmitting()
+   в System.Threading.ThreadHelper.ThreadStart_Context(Object state)
+   в System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   в System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   в System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state)
+   в System.Threading.ThreadHelper.ThreadStart()

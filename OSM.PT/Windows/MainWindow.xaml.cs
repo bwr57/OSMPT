@@ -1683,7 +1683,7 @@ namespace Demo.WindowsPresentation
                                          //                byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(requestTest);
                                          // устанавливаем тип содержимого - параметр ContentType
                 request.ContentType = "application/x-www-form-urlencoded";
-                string strRequest = "Start_Time=16.06.2019 11.38.52&Stop_Time=16.06.2019 23.58.52&Vehicle=UAZ501";
+                string strRequest = "Start_Time=07.08.2019 15.34.52&Stop_Time=07.08.2019 16.04.00&Vehicle=YaMZ240";
                 byte[] serializedMessage = Encoding.UTF8.GetBytes(strRequest);
                 // Устанавливаем заголовок Content-Length запроса - свойство ContentLength
                 request.ContentLength = serializedMessage.Length;

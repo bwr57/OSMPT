@@ -87,7 +87,7 @@ namespace RodSoft.OSM.Tracking.Registrator
                 Latitude = double.Parse(strLocationParameters[0]);
                 Longitude = double.Parse(strLocationParameters[1]);
                 Altitude = double.Parse(strLocationParameters[2]);
-                Speed = double.Parse(strLocationParameters[3]) * 4;
+                Speed = double.Parse(strLocationParameters[3]);
                 Course = double.Parse(strLocationParameters[4]);
                 LastRegistrationTime = DateTime.Now;
                 IsError = false;
